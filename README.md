@@ -24,13 +24,13 @@ import ui from 'redux-ui';
 class Posts extends Component {
 
   static propTypes = {
-    updateUi: PropTypes.func.isRequired,
+    updateUI: PropTypes.func.isRequired,
     ui: PropTypes.object.isRequired
   }
 
   showForm = (evt) => () {
     evt.preventDefault();
-    this.updateUi('isFormVisible', true);
+    this.props.updateUI('isFormVisible', true);
   }
 
   render() {
@@ -48,7 +48,7 @@ class Posts extends Component {
 class NewPostForm extends Component {
   
   static propTypes = {
-    updateUi: PropTypes.func.isRequired,
+    updateUI: PropTypes.func.isRequired,
     ui: PropTypes.object.isRequired
   }
 

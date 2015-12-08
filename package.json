@@ -1,0 +1,29 @@
+{
+  "name": "redux-ui",
+  "version": "0.0.0",
+  "description": "UI state management for Redux and React",
+  "main": "transpiled/index.js",
+  "scripts": {
+    "prepublish": "$(npm bin)/babel -d transpiled src",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tonyhb/redux-ui.git"
+  },
+  "keywords": [
+    "react-component",
+    "redux",
+    "redux-ui",
+    "ui"
+  ],
+  "author": "Tony Holdstock-Brown",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tonyhb/redux-ui/issues"
+  },
+  "homepage": "https://github.com/tonyhb/redux-ui#readme",
+  "devDependencies": {
+    "babel": "^5.8.34"
+  }
+}
