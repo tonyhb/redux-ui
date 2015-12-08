@@ -9,6 +9,19 @@ export default function(state = {}, action) {
   switch (action.type) {
     case UPDATE_UI_STATE:
       const { name, value } = action.payload;
+
+      // We're updating many values using an object
+      if (typeof name === 'object') {
+        return {
+          ...state,
+          [key]: {
+            ...state[key],
+            ...name
+          }
+        };
+      }
+
+      // Only updating a name/value pair
       return {
         ...state,
         [key]: {
