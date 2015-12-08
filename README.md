@@ -5,7 +5,7 @@ Store transient UI state in a global reducer which blows away automatically.
 ### Setup
 
 1. Add the redux-ui reducer to your reducers **under the `ui` key**:
-  `combineReducers({ ...yourReducers, ui: uiReducer })
+  `combineReducers({ ...yourReducers, ui: uiReducer })`
 2. In each 'scene' or parent component add the UI decorator with the key in
    which to save all state: `@ui('some-component')`
 3. In each child component use the basic `@ui()` decorator; it will
@@ -16,7 +16,7 @@ Store transient UI state in a global reducer which blows away automatically.
 The `@ui` decorator injects four props into your components:
 
 1. `uiKey`: The key passed to the decorator from the decorator (eg.
-   'some-decorator' with `@ui('some-decorator')`)`
+   'some-decorator' with `@ui('some-decorator')`
 2. `ui`: The UI state for the component's `uiKey`
 3. `updateUI`: A function accepting either a name/value pair or object which
    updates state within `uiKey`
