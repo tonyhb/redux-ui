@@ -8,7 +8,7 @@ import invariant from 'invariant';
 import { updateUI, massUpdateUI, setDefaultUI } from './action-reducer';
 
 const connector = connect(
-  (state) => { return { ui: state.newUI }; },
+  (state) => { return { ui: state.ui }; },
   (dispatch) => bindActionCreators({ updateUI, massUpdateUI, setDefaultUI }, dispatch)
 );
 
