@@ -203,6 +203,7 @@ export default function ui(key, opts = {}) {
 
           return (
             <WrappedComponent
+              { ...this.props }
               uiKey={ key }
               ui={ this.mergeUIProps() }
               resetUI={ ::this.resetUI }
