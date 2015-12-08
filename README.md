@@ -22,6 +22,15 @@ The `@ui` decorator injects four props into your components:
    updates state within `uiKey`
 4. `resetUI`: A function which resets the state within `uiKey` to its default
 
+The decorator will set any default state specified (see below).
+
+On `componentWillUnmount` the entire state in `uiKey` will be set to undefined.
+
+You can also blow away state by calling	`resetUI` (for example, on router
+changes).
+
+Automatic resetting based on action types to be worked on.
+
 ### Examples
 
 ```js
