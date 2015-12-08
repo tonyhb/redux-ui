@@ -16,7 +16,7 @@ Store transient UI state in a global reducer which blows away automatically.
 The `@ui` decorator injects four props into your components:
 
 1. `uiKey`: The key passed to the decorator from the decorator (eg.
-   'some-decorator' with `@ui('some-decorator')`)
+   'some-decorator' with `@ui('some-decorator')`)`
 2. `ui`: The UI state for the component's `uiKey`
 3. `updateUI`: A function accepting either a name/value pair or object which
    updates state within `uiKey`
@@ -71,6 +71,20 @@ class NewPostForm extends Component {
     }
     return <p>...</p>;
   }
+}
+```
+
+**Setting default state**
+
+```js
+@ui('smome-key', {
+  defaultState: {
+    whatever: 'you',
+    want: true
+  }
+})
+class SomeComponent extends Component {
+  ...
 }
 ```
 
