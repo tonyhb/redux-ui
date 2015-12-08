@@ -112,3 +112,5 @@ All of these goals should be easy to achieve.
 ---
 
 MIT license.
+
+Written by [https://github.com/fta2012](Franklin Ta) and [Tony Holdstock-Brown](https://github.com/tonyhb).
