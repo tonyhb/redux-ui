@@ -19,13 +19,6 @@ export default function ui(key, opts = {}) {
   }
 
   return (WrappedComponent) => {
-    // If the key is undefined generate a new random hex key for the current
-    // component's UI scope.
-    if (key === undefined) {
-      key = (WrappedComponent.constructor.displayName || 
-             WrappedComponent.constructor.name) +
-             Math.floor(Math.random() * (1 << 30)).toString(16);
-    }
 
     // Return a parent UI class which scopes all UI state to the given key
     return connector(
@@ -49,6 +42,24 @@ export default function ui(key, opts = {}) {
        * All state will be blown away on navigation by default.
        */
       class UI extends Component {
+
+        constructor(props) {
+          super(props);
+
+          // If the key is undefined generate a new random hex key for the 
+          // current component's UI scope.
+          //
+          // We do this in construct() to guarantee a new key at component
+          // instantiation time wihch is needed for iterating through a list of
+          // components with no explicit key
+          if (key === undefined) {
+            this.key = (WrappedComponent.constructor.displayName || 
+                   WrappedComponent.constructor.name) +
+                   Math.floor(Math.random() * (1 << 30)).toString(16);
+          } else {
+            this.key = key;
+          }
+        }
 
         static propTypes = {
           // The entire global UI state via react-redux connector
@@ -122,7 +133,7 @@ export default function ui(key, opts = {}) {
         getMergedContextVars() {
           if (!this.uiVars || !this.uiPath) {
             const uiPath = this.context.uiPath || [];
-            this.uiPath = uiPath.concat(key);
+            this.uiPath = uiPath.concat(this.key);
 
             // Keep trackof each UI variable and which path it should be set in
             const state = opts.state || {};
@@ -143,7 +154,7 @@ export default function ui(key, opts = {}) {
           let [uiVars, uiPath] = this.getMergedContextVars();
 
           return {
-            uiKey: key,
+            uiKey: this.key,
             uiVars,
             uiPath,
 
@@ -166,7 +177,7 @@ export default function ui(key, opts = {}) {
           // Get a list of all UI variables available to this context (which
           // lists parent contexts) to see which key we need to set this in.
           const [uiVars] = this.getMergedContextVars();
-          const key = uiVars[name];
+          const uiVarPath = uiVars[name];
 
           if (typeof name === 'object' && value === undefined) {
             // We're mass updating many UI variables. These may or may not be
@@ -180,14 +191,14 @@ export default function ui(key, opts = {}) {
           }
 
           invariant(
-            key,
+            uiVarPath,
             `The '${name}' UI variable is not defined in the UI context in "` +
             (WrappedComponent.displayName || WrappedComponent.name) + '" ' +
             'or any parent UI context. Set this variable using the "state" ' +
             'option in the @ui decorator before using it.'
           );
 
-          this.props.updateUI(key, name, value);
+          this.props.updateUI(uiVarPath, name, value);
         }
 
         // Iterate through the list of contexts merging in UI variables from the
@@ -200,11 +211,10 @@ export default function ui(key, opts = {}) {
         }
 
         render() {
-
           return (
             <WrappedComponent
               { ...this.props }
-              uiKey={ key }
+              uiKey={ this.key }
               ui={ this.mergeUIProps() }
               resetUI={ ::this.resetUI }
               updateUI={ ::this.updateUI } />
@@ -212,40 +222,5 @@ export default function ui(key, opts = {}) {
         }
       }
     );
-
-    /*
-    // This is a child @ui component which updates all UI state within
-    // a parent's @ui scope
-    return connector(
-      class UIChild extends Component {
-        static propTypes = {
-          ui: object.isRequired
-        }
-
-        componentWillMount() {
-          invariant(
-            this.context.updateUI,
-            'Cannot find this.context.updateUI in "' +
-            (WrappedComponent.displayName || WrappedComponent.name) + '". ' +
-            'Set a UI key on this or one of its parents.'
-          );
-        }
-
-        render() {
-          const { component } = this.props;
-          const { uiKey, updateUI, resetUI } = this.context;
-          return (
-            <WrappedComponent
-              uiKey={ uiKey }
-              ui={ this.props.ui[key] || {} }
-              resetUI={ resetUI }
-              updateUI={ updateUI } />
-          );
-        }
-
-      }
-    );
-   */
-
   }
 }
