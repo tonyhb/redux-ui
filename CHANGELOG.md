@@ -1,3 +1,7 @@
+# v0.0.5
+- Work around issue in `componentWillMount` in React. See commit
+  `5f9ab5c44fc7941e6f78fa9470ab8a04b7487997` for more info.
+
 # v0.0.4
 - Fix invariant import in reducer
 
