@@ -23,81 +23,69 @@ The `@ui` decorator injects four props into your components:
 4. `resetUI`: A function which resets the state within `uiKey` to its default
 
 The decorator will set any default state specified (see below).
-
 On `componentWillUnmount` the entire state in `uiKey` will be set to undefined.
-
 You can also blow away state by calling	`resetUI` (for example, on router
 changes).
-
-Automatic resetting based on action types to be worked on.
 
 ### Examples
 
 ```js
 import ui from 'redux-ui';
 
-// This component reads and writes all UI data under the 'posts' key;
-// so will all of its children decorated with no key (`@ui()`)
-@ui('posts')
-class Posts extends Component {
-
-  static propTypes = {
-    updateUI: PropTypes.func.isRequired,
-    ui: PropTypes.object.isRequired
+// Componnet A gets its own context with the default UI state below.
+// `this.props.ui` will contain this state map.
+@ui({
+  state: {
+    filter: '',
+    isFormVisible: true,
+    isBackgroundRed: false
   }
-
-  showForm() {
-    // Update 'isFormVisible' within the posts key of global UI state.
-    this.props.updateUI('isFormVisible', true);
-  }
-
+})
+class A extends Component {
   render() {
     return (
       <div>
-        <a href='#' onClick={ ::this.showForm }>Add new post</a>
-        {/* We're rendering NewPostForm as a child which is decorated with no
-            key. In this case it will also be bound to the 'posts' key */}
-        <NewPostForm />
+        // This will render '{ "filter": '', isFormVisible: true, isBackgroundRed: false }'
+        <pre><code>{ this.props.ui }</code></pre>
+
+        // Render child B
+        <B />
       </div>
     );
   }
 }
 
+// B inherits context from A and adds its own context.
+// This means that this.props.ui still contains A's state map.
 @ui()
-class NewPostForm extends Component {
-  
-  static propTypes = {
-    updateUI: PropTypes.func.isRequired,
-    ui: PropTypes.object.isRequired
-  }
-
+class B extends Component {
   render() {
-    // Because this was rendered as a child and was decorated with no UI key it
-    // will read from the first parent's UI key it finds.
-    const { ui } = this.props;
-    if ( ! ui.isFormVisible) {
-      return;
-    }
-    return <p>...</p>;
+    return <C />;
   }
 }
-```
 
-**Setting default state**
-
-```js
-@ui('smome-key', {
-  defaultState: {
-    whatever: 'you',
-    want: true
+// C inherits context from its parent B. This works recursively,
+// therefore C's `this.props.ui` has the state map from `A` **plus**
+// `someChildProp`.
+//
+// Setting variables within C updates within the context of A; all UI
+// components connected to this UI key will receive the new props.
+@ui({
+  state: {
+    someChildProp: 'foo'
   }
 })
-class SomeComponent extends Component {
-  ...
+class C extends Component {
+  render() {
+    return (
+      <div>
+        <p>I have my own UI state C and inherit UI state from B and A</p>
+        <p>If I define variables which collide with B or A mine will
+        be used, as it is the most specific context.</p>
+    );
+  }
 }
 ```
-
-<sup>(ignore that form hiding/showing should be done in the parent)</sup>
 
 ### Aims
 
@@ -113,4 +101,4 @@ All of these goals should be easy to achieve.
 
 MIT license.
 
-Written by [https://github.com/fta2012](Franklin Ta) and [Tony Holdstock-Brown](https://github.com/tonyhb).
+Written by [Franklin Ta](https://github.com/fta2012) and [Tony Holdstock-Brown](https://github.com/tonyhb).
