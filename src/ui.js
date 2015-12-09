@@ -5,11 +5,11 @@ const { array, func, node, object, string } = PropTypes;
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import invariant from 'invariant';
-import { updateUI, massUpdateUI, setDefaultUI } from './action-reducer';
+import { updateUI, massUpdateUI, setDefaultUI, unmountUI } from './action-reducer';
 
 const connector = connect(
   (state) => { return { ui: state.ui }; },
-  (dispatch) => bindActionCreators({ updateUI, massUpdateUI, setDefaultUI }, dispatch)
+  (dispatch) => bindActionCreators({ updateUI, massUpdateUI, setDefaultUI, unmountUI }, dispatch)
 );
 
 export default function ui(key, opts = {}) {
@@ -123,7 +123,7 @@ export default function ui(key, opts = {}) {
         // state for this key to undefined. This will get reset to the
         // default state in componentWillMount in the future.
         componentWillUnmount() {
-          this.props.setDefaultUI(this.uiPath);
+          this.props.unmountUI(this.uiPath);
         }
 
         // Sets this.uiVars && this.uiPath.

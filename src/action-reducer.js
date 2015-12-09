@@ -9,6 +9,7 @@ import immutable, { Map } from 'immutable';
 // performant.
 export const MASS_UPDATE_UI_STATE = '@@redux-ui/MASS_UPDATE_UI_STATE';
 export const UPDATE_UI_STATE = '@@redux-ui/UPDATE_UI_STATE';
+export const UNMOUNT_UI_STATE = '@@redux-ui/UNMOUNT_UI_STATE';
 export const SET_DEFAULT_UI_STATE = '@@redux-ui/SET_DEFAULT_UI_STATE';
 
 const defaultState = new Map();
@@ -44,6 +45,12 @@ export default function(state = defaultState, action) {
     case SET_DEFAULT_UI_STATE:
       // Replace all UI under a key with the given values
       return state.setIn(key, action.payload.value);
+
+    case UNMOUNT_UI_STATE:
+      // We have to use deleteIn as react unmounts root components first;
+      // this means that using setIn in child contexts will fail as the root
+      // context will be stored as undefined in our state
+      return state.deleteIn(key);
   }
 
   return state;
@@ -76,6 +83,16 @@ export function setDefaultUI(key, value) {
     payload: {
       key,
       value: immutable.fromJS(value)
+    }
+  };
+};
+
+// This is not exposed to your components; it's only used in the decorator.
+export function unmountUI(key) {
+  return {
+    type: UNMOUNT_UI_STATE,
+    payload: {
+      key
     }
   };
 };
