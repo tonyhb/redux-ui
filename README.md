@@ -34,12 +34,35 @@ This is **powerful**. **Each component is reusable** and can still affect UI sta
 
 ### Setup
 
-1. Add the redux-ui reducer to your reducers **under the `ui` key**:
-  `combineReducers({ ...yourReducers, ui: uiReducer })`
-2. In each 'scene' or parent component add the UI decorator with the key in
-   which to save all state: `@ui('some-component')`
-3. In each child component use the basic `@ui()` decorator; it will
-   automatically read and write UI state to the parent component's UI key
+**Step 1**: Add the redux-ui reducer to your reducers **under the `ui` key**:
+```js
+import { reducer as uiReducer } from 'redux-ui'
+// ...
+combineReducers({ ...yourReducers, ui: uiReducer })
+```
+
+**Step 2**: In each 'scene' or parent component add the UI decorator with the key in
+which to save all state:
+```
+import ui from 'redux-ui';
+
+@ui({
+  state: {
+    yourVars: 'withDefaults',
+    filters: []
+  }
+})
+class YourComponent extends React.Component {
+}
+```
+
+**Step 3**: In each child component use the basic `@ui()` decorator; it will
+automatically read and write UI state to the parent component's UI key.
+
+You can also define variables in child components. If your child component has
+variables named the same as a parent component think of block scoping:
+everything within your child component down will read from the child's scope,
+but the parent will use the parent's UI variable.
 
 ### Usage
 
