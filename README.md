@@ -1,6 +1,36 @@
-# redux-ui makes UI state management easy
+# redux-ui: ui state without profanity
 
-Store transient UI state in a global reducer which blows away automatically.
+Think of redux-ui as **block-level scoping** for UI state. In this example each block-scope represents a component, and each variable represents a UI state key:
+
+```js
+{
+  // Everything inside this scope has access to filter and tags. This is our root UI component.
+  let filter = '';
+  let tags = [];
+
+  // Imagine the following scopes are a list of to-do tasks:
+  {
+    // Everything inside this scope has access to isSelected - plus all parent variables.
+    let isSelected = true
+  }
+  {
+    // This also has isSelected inside its scope and access to parent variables, but
+    // isSelected is in a separate scope and can be manipulated independently from other
+    // siblings.
+    let isSelected = false
+  }
+}
+```
+
+Wrap your root component with the redux-ui `@ui()` decorator.  It's given a new scope for temporary UI variables which:
+
+- are automatically bound to `this.props.ui`
+- are auomatically passed any child component wrapped with the `@ui()` decorator
+- will be automatically reset on componentWillUnmount (preventable via options)
+- can be reset manually via a prop
+- are updatable by any child component within the `@ui()` decorator
+
+This is **powerful**. **Each component is reusable** and can still affect UI state for parent components.
 
 ### Setup
 
