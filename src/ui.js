@@ -126,7 +126,7 @@ export default function ui(key, opts = {}) {
 
             // Keep trackof each UI variable and which path it should be set in
             const state = opts.state || {};
-            this.uiVars = this.context.uiVars || {};
+            this.uiVars = { ...this.context.uiVars } || {};
             Object.keys(state).forEach(k => this.uiVars[k] = this.uiPath, this);
           }
 
