@@ -1,6 +1,7 @@
 'use strict';
 
 import immutable, { Map } from 'immutable';
+import invariant from 'invariant'
 
 // For updating multiple UI variables at once.  Each variable might be part of
 // a different context; this means that we need to either call updateUI on each
