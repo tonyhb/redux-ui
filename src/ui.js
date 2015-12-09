@@ -43,8 +43,8 @@ export default function ui(key, opts = {}) {
        */
       class UI extends Component {
 
-        constructor(props) {
-          super(props);
+        constructor(props, ctx, queue) {
+          super(props, ctx, queue);
 
           // If the key is undefined generate a new random hex key for the 
           // current component's UI scope.
@@ -58,6 +58,16 @@ export default function ui(key, opts = {}) {
                    Math.floor(Math.random() * (1 << 30)).toString(16);
           } else {
             this.key = key;
+          }
+
+          // Immediately set this.uiPath and this.uiVars based on the incoming
+          // context in class instantiation
+          this.getMergedContextVars(ctx);
+
+          // If the component's UI subtree doesn't exist and we have state to
+          // set ensure we update our global store with the current state.
+          if (props.ui.getIn(this.uiPath) === undefined && opts.state)  {
+            ctx.store.dispatch(setDefaultUI(this.uiPath, opts.state));
           }
         }
 
@@ -87,9 +97,8 @@ export default function ui(key, opts = {}) {
 
         // Get the existing context from a UI parent, if possible
         static contextTypes = {
-          // Connect to the redux store directly for the bug in
-          // componentWillMount (TODO: investigate react bug and fix).
-          // This is used in mergeUIProps.
+          // This is used in mergeUIProps and construct() to immediately set
+          // props.
           store: any,
 
           uiKey: string,
@@ -98,19 +107,6 @@ export default function ui(key, opts = {}) {
 
           updateUI: func,
           resetUI: func
-        }
-
-        // When the component mounts merge the parent context variables with the
-        // current context.
-        componentWillMount() {
-          // Ensure we have this.uiVars set up for local context's UI state
-          this.getMergedContextVars();
-
-          // If the component's UI subtree doesn't exist and we have state to
-          // set ensure we update our global store with the current state.
-          if (this.props.ui.getIn(this.uiPath) === undefined && opts.state)  {
-            this.props.setDefaultUI(this.uiPath, opts.state);
-          }
         }
 
         // When a parent context calls resetUI it blows away the entire subtree
@@ -137,14 +133,14 @@ export default function ui(key, opts = {}) {
         //
         // Merges this UI context's variables with any parent context's
         // variables defined in uiVars.
-        getMergedContextVars() {
+        getMergedContextVars(ctx = this.context) {
           if (!this.uiVars || !this.uiPath) {
-            const uiPath = this.context.uiPath || [];
+            const uiPath = ctx.uiPath || [];
             this.uiPath = uiPath.concat(this.key);
 
             // Keep trackof each UI variable and which path it should be set in
             const state = opts.state || {};
-            this.uiVars = { ...this.context.uiVars } || {};
+            this.uiVars = { ...ctx.uiVars } || {};
             Object.keys(state).forEach(k => this.uiVars[k] = this.uiPath, this);
           }
 
