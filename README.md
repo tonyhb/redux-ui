@@ -62,13 +62,13 @@ changes).
 The decorator takes an object of options:
 
 ```
-`@ui({
+@ui({
   key: 'some-name',
   persist: true,
   state: {
     uiVar1: ''
   }
-})`
+})
 ```
 
 ##### `key`: string, defaults to random characters
