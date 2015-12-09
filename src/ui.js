@@ -123,7 +123,9 @@ export default function ui(key, opts = {}) {
         // state for this key to undefined. This will get reset to the
         // default state in componentWillMount in the future.
         componentWillUnmount() {
-          this.props.unmountUI(this.uiPath);
+          if (opts.persist !== true) {
+            this.props.unmountUI(this.uiPath);
+          }
         }
 
         // Sets this.uiVars && this.uiPath.
