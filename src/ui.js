@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { Component, PropTypes } from 'react';
-const { array, func, node, object, string } = PropTypes;
+const { any, array, func, node, object, string } = PropTypes;
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import invariant from 'invariant';
@@ -87,6 +87,11 @@ export default function ui(key, opts = {}) {
 
         // Get the existing context from a UI parent, if possible
         static contextTypes = {
+          // Connect to the redux store directly for the bug in
+          // componentWillMount (TODO: investigate react bug and fix).
+          // This is used in mergeUIProps.
+          store: any,
+
           uiKey: string,
           uiPath: array,
           uiVars: object,
@@ -206,8 +211,34 @@ export default function ui(key, opts = {}) {
         // Iterate through the list of contexts merging in UI variables from the
         // UI store
         mergeUIProps() {
+          // WARNING: React has a subtle componentWillMount bug which we're
+          // working around here!
+          //
+          // ## React bug
+          //
+          // On the first *ever* render of this component we set defaults in
+          // componentWillMount. This works; when `render()` is called the
+          // wrapped component has the default props within this.props.ui
+          //
+          // BUT.  Unmount, navigate away then return to this component.  When
+          // componentWillMount is called a *second* time, we call updateUI to
+          // set default props. **These aren't passed in to render() until the
+          // component is mounted a second time**. Even though it worked first
+          // time. And even though this is a new instance of the component.
+          //
+          // ## Workaround.
+          //
+          // Instead of relying on this.props.ui from our connector we call
+          // getState() in the store directly here. We guarantee that this will
+          // be the latest set of props, including default props set in
+          // componentWillMount.
+          //
+          // We still use @connect() to connect to the store and listen for
+          // changes in other cases.
+          let ui = this.context.store.getState().ui;
+
           return Object.keys(this.uiVars).reduce((props, k) => {
-            props[k] = this.props.ui.getIn(this.uiVars[k].concat(k));
+            props[k] = ui.getIn(this.uiVars[k].concat(k));
             return props;
           }, {}) || {};
         }
