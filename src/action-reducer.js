@@ -1,6 +1,6 @@
 'use strict';
 
-import immutable, { Map } from 'immutable';
+import { Map } from 'immutable';
 import invariant from 'invariant'
 
 // For updating multiple UI variables at once.  Each variable might be part of
@@ -83,7 +83,7 @@ export function setDefaultUI(key, value) {
     type: SET_DEFAULT_UI_STATE,
     payload: {
       key,
-      value: immutable.fromJS(value)
+      value: new Map(value)
     }
   };
 };
