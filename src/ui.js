@@ -123,9 +123,16 @@ export default function ui(key, opts = {}) {
         // Blow away all UI state for this component key by setting the
         // state for this key to undefined. This will get reset to the
         // default state in componentWillMount in the future.
+        //
+        // We use requestAnimationFrame because `@ui()` can be combined with
+        // with `@connect()`; if the connect decorator uses selectors based on
+        // UI state (such as live filtering) the connect decorator will receive
+        // `undefined` as `this.props.ui` before unmounting.
+        //
+        // requestAnimationFrame avoids this.
         componentWillUnmount() {
           if (opts.persist !== true) {
-            this.props.unmountUI(this.uiPath);
+            window.requestAnimationFrame(() => this.props.unmountUI(this.uiPath));
           }
         }
 
