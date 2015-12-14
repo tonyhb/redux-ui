@@ -176,4 +176,30 @@ describe('UI state context', () => {
 
   });
 
+  describe('shared contexts', () => {
+    class Foo extends Component {
+      updateContext(to = 'misc') { this.props.updateUI('name', to); }
+      render = () => <div />
+    }
+    class Bar extends Component {
+      updateContext(to = 'misc') { this.props.updateUI('name', to); }
+      render = () => <div />
+    }
+    const adapter = ui({ key: 'a', state: { name: 'name' } });
+    const UIFoo = adapter(Foo);
+    const UIBar = adapter(Bar);
+
+    it('components with the same key and nesting share the same context', () => {
+        const tree = render(<div><UIFoo /><UIBar /></div>);
+        const a = TestUtils.findRenderedComponentWithType(tree, Foo);
+        const b = TestUtils.findRenderedComponentWithType(tree, Bar);
+
+        assert(shallowEqual(a.props.ui, b.props.ui));
+        a.updateContext();
+        assert(a.props.ui.name === 'misc');
+        assert(shallowEqual(a.props.ui, b.props.ui));
+    });
+
+  });
+
 });
