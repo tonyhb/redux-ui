@@ -11,19 +11,43 @@ import { render, renderAndFind } from '../utils/render.js';
 describe('UI state context', () => {
 
   describe('single component tree', () => {
-    class Test extends Component { render() { return <p>Hi</p>; } }
+    class Test extends Component {
+      updateName() { this.props.updateUI('name', 'test'); }
+      massUpdate() {
+        this.props.updateUI({
+          name: 'test',
+          isValid: false
+        });
+      }
+      render() { return <p>Hi</p>; }
+    }
     const uiState = {
-      string: 'foo',
+      name: 'foo',
       isValid: true
     };
     const WrappedTest = ui({ state: uiState })(Test);
-
+ 
     it('component gets given expected props', () => {
       const c = renderAndFind(<WrappedTest />, Test);
       assert(typeof c.props.updateUI === 'function', 'has updateUI');
       assert(typeof c.props.resetUI === 'function', 'has resetUI');
       assert(typeof c.props.uiKey === 'string', 'has uiKey');
       assert(shallowEqual(c.props.ui, uiState), 'has default state');
+    });
+
+    it('updates props using the single-update syntax', () => {
+      const c = renderAndFind(<WrappedTest />, Test);
+      assert(c.props.ui.name === 'foo');
+      c.updateName()
+      assert(c.props.ui.name === 'test');
+    });
+
+    it('updates props using the mass-update syntax', () => {
+      const c = renderAndFind(<WrappedTest />, Test);
+      assert(c.props.ui.name === 'foo');
+      c.massUpdate()
+      assert(c.props.ui.name === 'test');
+      assert(c.props.ui.isValid === false);
     });
   });
 
