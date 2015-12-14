@@ -5,7 +5,7 @@
   "main": "transpiled/index.js",
   "scripts": {
     "prepublish": "$(npm bin)/babel -d transpiled src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "$(npm bin)/mocha  --compilers js:babel/register --recursive --require ./test/setup.js"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,11 @@
   },
   "homepage": "https://github.com/tonyhb/redux-ui#readme",
   "devDependencies": {
-    "babel": "^5.8.34"
+    "babel": "^5.8.34",
+    "chai": "^3.4.1",
+    "jsdom": "^7.2.1",
+    "mocha": "^2.3.4",
+    "react-addons-test-utils": "^1.14.3"
   },
   "dependencies": {
     "immutable": "^3.7.5",
