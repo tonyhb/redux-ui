@@ -22,7 +22,7 @@ describe('UI state context', () => {
       render() { return <p>Hi</p>; }
     }
     const uiState = {
-      name: 'foo',
+      name: 'parent',
       isValid: true
     };
     const UITest = ui({ state: uiState })(Test);
@@ -37,14 +37,14 @@ describe('UI state context', () => {
 
     it('updates props using the single-update syntax', () => {
       const c = renderAndFind(<UITest />, Test);
-      assert(c.props.ui.name === 'foo');
+      assert(c.props.ui.name === 'parent');
       c.updateName()
       assert(c.props.ui.name === 'test');
     });
 
     it('updates props using the mass-update syntax', () => {
       const c = renderAndFind(<UITest />, Test);
-      assert(c.props.ui.name === 'foo');
+      assert(c.props.ui.name === 'parent');
       c.massUpdate()
       assert(c.props.ui.name === 'test');
       assert(c.props.ui.isValid === false);
@@ -53,7 +53,7 @@ describe('UI state context', () => {
 
   describe('single-level nested ui component tree', () => {
     const uiState = {
-      name: 'foo'
+      name: 'parent'
     };
     class Parent extends Component {
       updateContext(to = 'parent') { this.props.updateUI('name', to); }
@@ -90,8 +90,8 @@ describe('UI state context', () => {
       const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
       const child = TestUtils.findRenderedComponentWithType(tree, Child);
 
-      assert(parent.props.ui.name === 'foo');
-      assert(child.props.ui.name === 'foo');
+      assert(parent.props.ui.name === 'parent');
+      assert(child.props.ui.name === 'parent');
       child.updateName();
       assert(parent.props.ui.name === 'bar');
       assert(child.props.ui.name === 'bar');
@@ -100,7 +100,7 @@ describe('UI state context', () => {
     it('child merges parent UI context with its own UI context', () => {
       const child = renderAndFind(UIChildWithOwnStateJSX, Child);
       const expectedState = {
-        name: 'foo',
+        name: 'parent',
         child: true
       };
       assert(shallowEqual(child.props.ui, expectedState), 'child merges context');
@@ -130,10 +130,50 @@ describe('UI state context', () => {
       const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
       const child = TestUtils.findRenderedComponentWithType(tree, Child);
 
-      parent.updateContext('parent');
-      assert(parent.props.ui.name === 'parent', 'parent updates context');
-      assert(child.props.ui.name === 'parent', 'child updates context');
+      parent.updateContext('what');
+      assert(parent.props.ui.name === 'what', 'parent updates context');
+      assert(child.props.ui.name === 'what', 'child updates context');
     });
+
+    describe('duplicating UI variable names across parent/child contexts', () => {
+      class Child extends Component {
+        updateChildContext(to = 'foo') { this.props.updateUI('name', to); }
+        render() { return <div /> }
+      }
+      const UIChild = ui({ state: { name: 'child' } })(Child);
+      const UIChildJSX = (<UIParent><UIChild /></UIParent>);
+
+      it('parent and child store state separately', () => {
+        const tree = render(UIChildJSX);
+        const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
+        const child = TestUtils.findRenderedComponentWithType(tree, Child);
+
+        assert(parent.props.ui.name === 'parent');
+        assert(child.props.ui.name === 'child');
+      }); 
+
+      it('parent updates context separately from parent', () => {
+        const tree = render(UIChildJSX);
+        const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
+        const child = TestUtils.findRenderedComponentWithType(tree, Child);
+
+        parent.updateContext('foobar');
+        assert(parent.props.ui.name === 'foobar');
+        assert(child.props.ui.name === 'child');
+      }); 
+
+
+      it('child updates context separately from parent', () => {
+        const tree = render(UIChildJSX);
+        const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
+        const child = TestUtils.findRenderedComponentWithType(tree, Child);
+
+        child.updateChildContext('foobar');
+        assert(parent.props.ui.name === 'parent');
+        assert(child.props.ui.name === 'foobar');
+      }); 
+    });
+
   });
 
 });
