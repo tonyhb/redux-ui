@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import TestUtils from 'react-addons-test-utils';
 
 import ui, { reducer } from '../../src';
-import { wrapWithProvider } from '../utils/render.js';
+import { render } from '../utils/render.js';
 
 describe('key generation', () => {
 
@@ -19,14 +19,12 @@ describe('key generation', () => {
 
   describe('opts.key === undefined', () => {
     it('assigns a random key to the component', () => {
-      const tree = TestUtils.renderIntoDocument(
-        wrapWithProvider(
-          <div>
-            <WrappedTestWithoutKey />
-            <WrappedTestWithoutKey />
-            <WrappedTestWithoutKey />
-          </div>
-        )
+      const tree = render(
+        <div>
+          <WrappedTestWithoutKey />
+          <WrappedTestWithoutKey />
+          <WrappedTestWithoutKey />
+        </div>
       );
       const comps = TestUtils
         .scryRenderedComponentsWithType(tree, Test);
@@ -46,9 +44,7 @@ describe('key generation', () => {
 
   describe('opts.key !== undefined', () => {
     it('uses the specified key', () => {
-      const tree = TestUtils.renderIntoDocument(
-        wrapWithProvider(<WrappedTestWithKey />)
-      );
+      const tree = render(<WrappedTestWithKey />);
       const c = TestUtils.findRenderedComponentWithType(tree, Test);
       const { uiKey } = c.props;
 
