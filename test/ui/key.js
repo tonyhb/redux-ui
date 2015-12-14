@@ -1,17 +1,11 @@
 'use strict';
 
-
 import { assert } from 'chai'; 
-import { reducer } from '../../src';
-import ui from '../../src/ui';
-
 import React, { Component } from 'react';
 import TestUtils from 'react-addons-test-utils';
 
-// redux
-import { createStore, combineReducers } from 'redux';
-import { Provider } from 'react-redux';
-let store = createStore(combineReducers({ ui: reducer }));
+import ui, { reducer } from '../../src';
+import { wrapWithProvider } from '../utils/render.js';
 
 describe('key generation', () => {
 
@@ -26,13 +20,13 @@ describe('key generation', () => {
   describe('opts.key === undefined', () => {
     it('assigns a random key to the component', () => {
       const tree = TestUtils.renderIntoDocument(
-        <Provider store={ store }>
+        wrapWithProvider(
           <div>
             <WrappedTestWithoutKey />
             <WrappedTestWithoutKey />
             <WrappedTestWithoutKey />
           </div>
-        </Provider>
+        )
       );
       const comps = TestUtils
         .scryRenderedComponentsWithType(tree, Test);
@@ -53,11 +47,8 @@ describe('key generation', () => {
   describe('opts.key !== undefined', () => {
     it('uses the specified key', () => {
       const tree = TestUtils.renderIntoDocument(
-        <Provider store={ store }>
-          <WrappedTestWithKey />
-        </Provider>
+        wrapWithProvider(<WrappedTestWithKey />)
       );
-
       const c = TestUtils.findRenderedComponentWithType(tree, Test);
       const { uiKey } = c.props;
 
