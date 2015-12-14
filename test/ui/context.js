@@ -80,7 +80,6 @@ describe('UI state context', () => {
       assert(parent.props.ui.name === 'bar');
       assert(child.props.ui.name === 'bar');
     });
-
   });
 
 });

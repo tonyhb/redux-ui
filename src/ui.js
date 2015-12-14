@@ -63,12 +63,6 @@ export default function ui(key, opts = {}) {
           // Immediately set this.uiPath and this.uiVars based on the incoming
           // context in class instantiation
           this.getMergedContextVars(ctx);
-
-          // If the component's UI subtree doesn't exist and we have state to
-          // set ensure we update our global store with the current state.
-          if (props.ui.getIn(this.uiPath) === undefined && opts.state)  {
-            ctx.store.dispatch(setDefaultUI(this.uiPath, opts.state));
-          }
         }
 
         static propTypes = {
@@ -107,6 +101,14 @@ export default function ui(key, opts = {}) {
 
           updateUI: func,
           resetUI: func
+        }
+
+        componentWillMount() {
+          // If the component's UI subtree doesn't exist and we have state to
+          // set ensure we update our global store with the current state.
+          if (this.props.ui.getIn(this.uiPath) === undefined && opts.state)  {
+            this.context.store.dispatch(setDefaultUI(this.uiPath, opts.state));
+          }
         }
 
         // When a parent context calls resetUI it blows away the entire subtree
