@@ -10,27 +10,40 @@ import invariant from 'invariant'
 // performant.
 export const MASS_UPDATE_UI_STATE = '@@redux-ui/MASS_UPDATE_UI_STATE';
 export const UPDATE_UI_STATE = '@@redux-ui/UPDATE_UI_STATE';
-export const UNMOUNT_UI_STATE = '@@redux-ui/UNMOUNT_UI_STATE';
 export const SET_DEFAULT_UI_STATE = '@@redux-ui/SET_DEFAULT_UI_STATE';
 
-const defaultState = new Map();
+// These are private consts used in actions only given to the UI decorator.
+const MOUNT_UI_STATE = '@@redux-ui/MOUNT_UI_STATE';
+const UNMOUNT_UI_STATE = '@@redux-ui/UNMOUNT_UI_STATE';
 
-export default function(state = defaultState, action) {
+const defaultState = new Map({
+  __reducers: new Map({
+    // This contains a map of component paths (joined by '.') to an object
+    // containing the fully qualified path and the reducer function:
+    // 'parent.child': {
+    //   path: ['parent', 'child'],
+    //   func: (state, action) => { ... }
+    // }
+  })
+});
+
+export default function reducer(state = defaultState, action) {
   let key = action.payload && (action.payload.key || []);
 
   if (!Array.isArray(key)) {
     key = [key];
   }
 
+
   switch (action.type) {
     case UPDATE_UI_STATE:
       const { name, value } = action.payload;
-      return state.setIn(key.concat(name), value);
+      state = state.setIn(key.concat(name), value);
+      break;
 
     case MASS_UPDATE_UI_STATE:
       const { uiVars, transforms } = action.payload;
-
-      return state.withMutations( s => {
+      state = state.withMutations( s => {
         Object.keys(transforms).forEach(k => {
           const path = uiVars[k];
           invariant(
@@ -42,16 +55,53 @@ export default function(state = defaultState, action) {
           s.setIn(path.concat(k), transforms[k]);
         });
       });
+      break;
 
     case SET_DEFAULT_UI_STATE:
       // Replace all UI under a key with the given values
-      return state.setIn(key, action.payload.value);
+      state = state.setIn(key, action.payload.value);
+      break;
+
+    case MOUNT_UI_STATE:
+      const { defaults, customReducer } = action.payload;
+      state = state.withMutations( s => {
+        // Set the defaults for the component
+        s.setIn(key, defaults);
+
+        // If this component has a custom reducer add it to the list.
+        if (customReducer) {
+          let path = key.join('.');
+          s.setIn(['__reducers', path], {
+            path: key,
+            func: customReducer
+          });
+        }
+
+        return s;
+      });
+      break;
 
     case UNMOUNT_UI_STATE:
       // We have to use deleteIn as react unmounts root components first;
       // this means that using setIn in child contexts will fail as the root
       // context will be stored as undefined in our state
-      return state.deleteIn(key);
+      state= state.withMutations(s => {
+        s.deleteIn(key);
+        // Remove any custom reducers
+        s.deleteIn(['__reducers', key.join('.')]);
+      });
+      break;
+  }
+
+  const customReducers = state.get('__reducers');
+  if (customReducers.size > 0) {
+    state = state.withMutations(mut => {
+      customReducers.forEach(r => {
+        const { path, func } = r;
+        mut.setIn(path, func(mut.getIn(path), action));
+      });
+      return mut;
+    });
   }
 
   return state;
@@ -78,6 +128,8 @@ export function massUpdateUI(uiVars, transforms) {
   };
 }
 
+// Exposed to components, allowing them to reset their and all child scopes to
+// the default variables set up
 export function setDefaultUI(key, value) {
   return {
     type: SET_DEFAULT_UI_STATE,
@@ -88,6 +140,8 @@ export function setDefaultUI(key, value) {
   };
 };
 
+/** Private, decorator only actions **/
+
 // This is not exposed to your components; it's only used in the decorator.
 export function unmountUI(key) {
   return {
@@ -97,3 +151,19 @@ export function unmountUI(key) {
     }
   };
 };
+
+/**
+ * Given the key/path, set of defaults and custom reducer for a UI component
+ * during construction prepare the state of the UI reducer
+ *
+ */
+export function mountUI(key, defaults, customReducer) {
+  return {
+    type: MOUNT_UI_STATE,
+    payload: {
+      key,
+      defaults: new Map(defaults),
+      customReducer
+    }
+  }
+}
