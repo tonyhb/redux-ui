@@ -1,3 +1,7 @@
+# v0.0.7
+- Add: Custom per-component reducers for local UI state modification
+- Fix: Fix react warnings from setting props in constructor
+
 # v0.0.6
 - Fix: no longer deeply convert UI defalts to immutableJS
 - Change: Set default UI state in constructor
