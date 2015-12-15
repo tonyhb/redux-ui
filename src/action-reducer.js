@@ -128,6 +128,14 @@ export default function reducer(state = defaultState, action) {
   return state;
 }
 
+export const reducerEnhancer = (customReducer) => (state, action) => {
+  state = reducer(state, action);
+  if (typeof customReducer === 'function') {
+    state = customReducer(state, action);
+  }
+  return state;
+}
+
 export function updateUI(key, name, value) {
   return {
     type: UPDATE_UI_STATE,
