@@ -29,8 +29,7 @@
     "jsdom": "^7.2.1",
     "mocha": "^2.3.4",
     "react-addons-test-utils": "^0.14.3",
-    "react-dom": "^0.14.3",
-    "react-redux": "^4.0.1"
+    "react-dom": "^0.14.3"
   },
   "dependencies": {
     "immutable": "^3.7.5",
