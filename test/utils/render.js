@@ -33,6 +33,7 @@ const renderAndFind = (jsx, type = null) => {
 }
 
 export {
+  store,
   wrapWithProvider,
   render,
   renderAndFind

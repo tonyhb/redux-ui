@@ -5,11 +5,17 @@ const { any, array, func, node, object, string } = PropTypes;
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import invariant from 'invariant';
-import { updateUI, massUpdateUI, setDefaultUI, unmountUI } from './action-reducer';
+import { updateUI, massUpdateUI, setDefaultUI, mountUI, unmountUI } from './action-reducer';
 
 const connector = connect(
   (state) => { return { ui: state.ui }; },
-  (dispatch) => bindActionCreators({ updateUI, massUpdateUI, setDefaultUI, unmountUI }, dispatch)
+  (dispatch) => bindActionCreators({
+    updateUI,
+    massUpdateUI,
+    setDefaultUI,
+    mountUI,
+    unmountUI
+  }, dispatch)
 );
 
 export default function ui(key, opts = {}) {
@@ -107,7 +113,7 @@ export default function ui(key, opts = {}) {
           // If the component's UI subtree doesn't exist and we have state to
           // set ensure we update our global store with the current state.
           if (this.props.ui.getIn(this.uiPath) === undefined && opts.state)  {
-            this.context.store.dispatch(setDefaultUI(this.uiPath, opts.state));
+            this.context.store.dispatch(mountUI(this.uiPath, opts.state, opts.reducer));
           }
         }
 
@@ -134,7 +140,11 @@ export default function ui(key, opts = {}) {
         // requestAnimationFrame avoids this.
         componentWillUnmount() {
           if (opts.persist !== true) {
-            window.requestAnimationFrame(() => this.props.unmountUI(this.uiPath));
+            if (window && window.requestAnimationFrame) {
+              window.requestAnimationFrame(() => this.props.unmountUI(this.uiPath));
+            } else {
+              this.props.unmountUI(this.uiPath);
+            }
           }
         }
 
