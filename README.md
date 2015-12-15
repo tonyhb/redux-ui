@@ -1,3 +1,5 @@
+[![Circle CI](https://circleci.com/gh/tonyhb/redux-ui.svg?style=svg)](https://circleci.com/gh/tonyhb/redux-ui)
+
 # redux-ui: ui state without profanity
 
 Think of redux-ui as **block-level scoping** for UI state. In this example each block-scope represents a component, and each variable represents a UI state key:
