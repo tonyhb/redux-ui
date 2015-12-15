@@ -15,7 +15,7 @@ export const SET_DEFAULT_UI_STATE = '@@redux-ui/SET_DEFAULT_UI_STATE';
 
 const defaultState = new Map();
 
-export default function(state = defaultState, action) {
+export default function reducer(state = defaultState, action) {
   let key = action.payload && (action.payload.key || []);
 
   if (!Array.isArray(key)) {
@@ -54,6 +54,14 @@ export default function(state = defaultState, action) {
       return state.deleteIn(key);
   }
 
+  return state;
+}
+
+export const reducerEnhancer = (customReducer) => (state, action) => {
+  state = reducer(state, action);
+  if (typeof customReducer === 'function') {
+    state = customReducer(state, action);
+  }
   return state;
 }
 
