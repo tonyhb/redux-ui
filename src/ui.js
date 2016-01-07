@@ -112,8 +112,20 @@ export default function ui(key, opts = {}) {
         componentWillMount() {
           // If the component's UI subtree doesn't exist and we have state to
           // set ensure we update our global store with the current state.
-          if (this.props.ui.getIn(this.uiPath) === undefined && opts.state)  {
-            this.context.store.dispatch(mountUI(this.uiPath, opts.state, opts.reducer));
+          if (this.props.ui.getIn(this.uiPath) === undefined && opts.state) {
+
+            const globalState = this.context.store.getState();
+            // If any default state keys contain a function set the default
+            // state to the result of the evaluated function; this function gets
+            // the component's props and the global state to set default values.
+            let state = { ...opts.state };
+            Object.keys(state).forEach(k => {
+              if (typeof(state[k]) === 'function') {
+                state[k] = state[k](this.props, globalState);
+              }
+            });
+
+            this.context.store.dispatch(mountUI(this.uiPath, state, opts.reducer));
           }
         }
 
