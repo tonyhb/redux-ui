@@ -1,3 +1,7 @@
+# v0.0.8
+- Add: allow default state to be set from an evaulated function with the
+  signature (props, state).
+
 # v0.0.7
 - Add: Custom per-component reducers for local UI state modification
 - Fix: Fix react warnings from setting props in constructor
