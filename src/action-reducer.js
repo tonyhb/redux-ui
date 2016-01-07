@@ -34,7 +34,6 @@ export default function reducer(state = defaultState, action) {
     key = [key];
   }
 
-
   switch (action.type) {
     case UPDATE_UI_STATE:
       const { name, value } = action.payload;
@@ -69,6 +68,8 @@ export default function reducer(state = defaultState, action) {
         s.setIn(key, defaults);
 
         // If this component has a custom reducer add it to the list.
+        // We store the reducer func and UI path for the current component
+        // inside the __reducers map.
         if (customReducer) {
           let path = key.join('.');
           s.setIn(['__reducers', path], {
@@ -97,6 +98,22 @@ export default function reducer(state = defaultState, action) {
   if (customReducers.size > 0) {
     state = state.withMutations(mut => {
       customReducers.forEach(r => {
+        // This calls each custom reducer with the UI state for each custom
+        // reducer with the component's UI state tree passed into it.
+        //
+        // NOTE: Each component's reducer gets its own UI state: not the entire
+        // UI reducer's state. Whatever is returned from this reducer is set
+        // within the **components** UI scope.
+        //
+        // This is because it's the only way to update UI state for components
+        // without keys - you need to know the path in advance to update state
+        // from a reducer.  If you have list of components with no UI keys in
+        // the component heirarchy, any children will not be able to use custom
+        // reducers as the path is random.
+        //
+        // TODO: Potentially add the possibility for a global UI state reducer?
+        //       Though why wouldn't you just add a custom reducer to the
+        //       top-level component?
         const { path, func } = r;
         mut.setIn(path, func(mut.getIn(path), action));
       });
