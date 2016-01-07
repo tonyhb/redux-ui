@@ -91,7 +91,10 @@ The decorator takes an object of options:
   key: 'some-name',
   persist: true,
   state: {
-    uiVar1: ''
+    uiVar1: '',
+    // You can set default UI state based on the component's props and the
+    // global store's state.
+    uiVar2: (props, state) => state.router.location.query.searchTerm
   }
 })
 ```
@@ -122,7 +125,8 @@ import ui from 'redux-ui';
 // `this.props.ui` will contain this state map.
 @ui({
   state: {
-    filter: '',
+    // use the filter query parma via redux-router as the default
+    filter: (props, state) => state.router.location.query.filter,
     isFormVisible: true,
     isBackgroundRed: false
   }
