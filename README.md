@@ -27,7 +27,7 @@ Think of redux-ui as **block-level scoping** for UI state. In this example each 
 Wrap your root component with the redux-ui `@ui()` decorator.  It's given a new scope for temporary UI variables which:
 
 - are automatically bound to `this.props.ui`
-- are auomatically passed any child component wrapped with the `@ui()` decorator
+- are automatically passed any child component wrapped with the `@ui()` decorator
 - will be automatically reset on componentWillUnmount (preventable via options)
 - can be reset manually via a prop
 - are updatable by any child component within the `@ui()` decorator
