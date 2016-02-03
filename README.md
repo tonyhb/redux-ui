@@ -99,6 +99,20 @@ The decorator takes an object of options:
 })
 ```
 
+### Non-decorator API
+
+You can use redux-ui without using an ES7 decorator like so:
+
+```
+import ui from 'redux-ui';
+// or ui = require('redux-ui').default;
+
+class SomeComponent extends Component {
+}
+
+SomeComponentWithUI = ui({ key: 'some-name', state: { ... }})(SomeComponent);
+```
+
 ##### `key`: string, defaults to random characters
 
 The name of the key used in the UI reducer under which we store all state.  Allows you to create selectors in reselect with known paths, and allows setting `persist` below.
