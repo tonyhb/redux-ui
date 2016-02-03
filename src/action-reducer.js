@@ -58,14 +58,14 @@ export default function reducer(state = defaultState, action) {
 
     case SET_DEFAULT_UI_STATE:
       // Replace all UI under a key with the given values
-      state = state.setIn(key, action.payload.value);
+      state = state.setIn(key, new Map(action.payload.value));
       break;
 
     case MOUNT_UI_STATE:
       const { defaults, customReducer } = action.payload;
       state = state.withMutations( s => {
         // Set the defaults for the component
-        s.setIn(key, defaults);
+        s.setIn(key, new Map(defaults));
 
         // If this component has a custom reducer add it to the list.
         // We store the reducer func and UI path for the current component
@@ -152,7 +152,7 @@ export function setDefaultUI(key, value) {
     type: SET_DEFAULT_UI_STATE,
     payload: {
       key,
-      value: new Map(value)
+      value
     }
   };
 };
@@ -179,7 +179,7 @@ export function mountUI(key, defaults, customReducer) {
     type: MOUNT_UI_STATE,
     payload: {
       key,
-      defaults: new Map(defaults),
+      defaults,
       customReducer
     }
   }
