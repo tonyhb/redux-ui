@@ -113,18 +113,7 @@ export default function ui(key, opts = {}) {
           // If the component's UI subtree doesn't exist and we have state to
           // set ensure we update our global store with the current state.
           if (this.props.ui.getIn(this.uiPath) === undefined && opts.state) {
-
-            const globalState = this.context.store.getState();
-            // If any default state keys contain a function set the default
-            // state to the result of the evaluated function; this function gets
-            // the component's props and the global state to set default values.
-            let state = { ...opts.state };
-            Object.keys(state).forEach(k => {
-              if (typeof(state[k]) === 'function') {
-                state[k] = state[k](this.props, globalState);
-              }
-            });
-
+            const state = this.getDefaultUIState(opts.state);
             this.context.store.dispatch(mountUI(this.uiPath, state, opts.reducer));
           }
         }
@@ -135,9 +124,29 @@ export default function ui(key, opts = {}) {
         // We may need to restore default props for this component if a parent
         // has blown away our state.
         componentWillReceiveProps(nextProps) {
-          if (nextProps.ui.getIn(this.uiPath) === undefined && opts.state) {
+          // We can only see if this component's state is blown away by
+          // accessing the current global UI state; the parent will not
+          // necessarily always pass down child state.
+          const ui = this.context.store.getState().ui;
+          if (ui.getIn(this.uiPath) === undefined && opts.state) {
+            const state = this.getDefaultUIState(opts.state, nextProps);
             this.props.setDefaultUI(this.uiPath, opts.state);
           }
+        }
+
+        // Get default state by evaluating any functions passed in to the state
+        // opts.
+        // This is also used within componentWilLReceiveProps and so props
+        // also needs to be passed in
+        getDefaultUIState(uiState, props = this.props) {
+          const globalState = this.context.store.getState();
+          let state = { ...uiState };
+          Object.keys(state).forEach(k => {
+            if (typeof(state[k]) === 'function') {
+              state[k] = state[k](this.props, globalState);
+            }
+          });
+          return state;
         }
 
         // Blow away all UI state for this component key by setting the
