@@ -1,3 +1,7 @@
+# v0.0.9
+- Fix: issue where componentWillReceiveProps could break derived state from
+  functions within opts.state
+
 # v0.0.8
 - Add: allow default state to be set from an evaulated function with the
   signature (props, state).
