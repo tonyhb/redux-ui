@@ -2,17 +2,29 @@
 
 import React from 'react';
 import { Provider } from 'react-redux';
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers as reduxCombineReducers } from 'redux';
+import { combineReducers as immutableCombineReducers } from 'redux-immutablejs';
 import ui, { reducer } from '../../src';
 import TestUtils from 'react-addons-test-utils';
 
-const store = createStore(combineReducers({ ui: reducer }));
+let _combineReducers = reduxCombineReducers;
+const setCombineReducers = (cr) => {
+  _combineReducers = (cr === 'reduxCombineReducers') ? reduxCombineReducers : immutableCombineReducers;
+}
+
+let store = null;
+const initStore = () => {
+  store = createStore(_combineReducers({ ui: reducer }));
+  return store;
+}
+
+const getUiState = (state, cr) => (cr === 'immutableCombineReducers') ? state.get('ui') : state.ui;
 
 /**
  * Wrap given JSX with a provider contianing a store with the UI reducer
  */
 const wrapWithProvider = (jsx) => (
-  <Provider store={ store }>
+  <Provider store={ initStore() }>
     { jsx }
   </Provider>
 );
@@ -36,5 +48,7 @@ export {
   store,
   wrapWithProvider,
   render,
-  renderAndFind
+  renderAndFind,
+  setCombineReducers,
+  getUiState
 }

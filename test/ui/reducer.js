@@ -1,6 +1,6 @@
 'use strict';
 
-import { assert } from 'chai'; 
+import { assert } from 'chai';
 
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
@@ -36,13 +36,13 @@ describe('with a custom reducer', () => {
   it('adds a custom reducer on mount and removes at unmount', () => {
     const c = renderAndFind(<UIParent />, Parent);
 
-    let reducers = store.getState().ui.get('__reducers');
+    let reducers = store().getState().ui.get('__reducers');
     assert.equal(reducers.size, 1);
     assert.equal(reducers.get('parent').func, parentReducer);
 
     // Unmount and this should be gone
     ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(c).parentNode);
-    reducers = store.getState().ui.get('__reducers');
+    reducers = store().getState().ui.get('__reducers');
     assert.equal(reducers.size, 0);
   });
 
@@ -57,7 +57,7 @@ describe('with a custom reducer', () => {
 
   it('responds to actions using a custom reducer', () => {
     const c = renderAndFind(<UIParent />, Parent);
-    store.dispatch({ type: 'CUSTOM' });
+    store().dispatch({ type: 'CUSTOM' });
     assert.equal(c.props.ui.name, 'parentOverride');
 
     ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(c).parentNode);
@@ -94,7 +94,7 @@ describe('with a custom reducer', () => {
       const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
       const child = TestUtils.findRenderedComponentWithType(tree, Child);
 
-      store.dispatch({ type: 'CUSTOM' });
+      store().dispatch({ type: 'CUSTOM' });
       // The reducerState should equal the default reducer state for our child
       // component
       assert.isTrue(is(reducerState, new Map({ foo: 'bar' })));
