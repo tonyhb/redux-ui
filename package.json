@@ -33,7 +33,8 @@
     "jsdom": "^7.2.1",
     "mocha": "^2.3.4",
     "react-addons-test-utils": "^0.14.3",
-    "react-dom": "^0.14.3"
+    "react-dom": "^0.14.3",
+    "redux-immutablejs": "0.0.8"
   },
   "dependencies": {
     "babel-register": "^6.6.0",

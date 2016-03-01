@@ -6,9 +6,12 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import invariant from 'invariant';
 import { updateUI, massUpdateUI, setDefaultUI, mountUI, unmountUI } from './action-reducer';
+import { Map } from 'immutable';
+
+const getUiState = (state) => Map.isMap(state) ? state.get('ui') : state.ui;
 
 const connector = connect(
-  (state) => { return { ui: state.ui }; },
+  (state) => { return { ui: getUiState(state) }; },
   (dispatch) => bindActionCreators({
     updateUI,
     massUpdateUI,
@@ -52,14 +55,14 @@ export default function ui(key, opts = {}) {
         constructor(props, ctx, queue) {
           super(props, ctx, queue);
 
-          // If the key is undefined generate a new random hex key for the 
+          // If the key is undefined generate a new random hex key for the
           // current component's UI scope.
           //
           // We do this in construct() to guarantee a new key at component
           // instantiation time wihch is needed for iterating through a list of
           // components with no explicit key
           if (key === undefined) {
-            this.key = (WrappedComponent.displayName || 
+            this.key = (WrappedComponent.displayName ||
                    WrappedComponent.name) +
                    Math.floor(Math.random() * (1 << 30)).toString(16);
           } else {
@@ -127,7 +130,7 @@ export default function ui(key, opts = {}) {
           // We can only see if this component's state is blown away by
           // accessing the current global UI state; the parent will not
           // necessarily always pass down child state.
-          const ui = this.context.store.getState().ui;
+          const ui = getUiState(this.context.store.getState());
           if (ui.getIn(this.uiPath) === undefined && opts.state) {
             const state = this.getDefaultUIState(opts.state, nextProps);
             this.props.setDefaultUI(this.uiPath, opts.state);
@@ -271,7 +274,7 @@ export default function ui(key, opts = {}) {
           //
           // We still use @connect() to connect to the store and listen for
           // changes in other cases.
-          let ui = this.context.store.getState().ui;
+          let ui = getUiState(this.context.store.getState());
 
           return Object.keys(this.uiVars).reduce((props, k) => {
             props[k] = ui.getIn(this.uiVars[k].concat(k));
