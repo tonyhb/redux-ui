@@ -72,9 +72,8 @@ describe('with a custom reducer', () => {
 
     // Create a UI component that listens to the 'CUSTOM' type and updates
     // UI variables
-    let childReducer = (state, action) => {
+    let childReducer = (state = {}, action) => {
       reducerState = state;
-
       if (action.type === 'CUSTOM') {
         return state.set('foo', 'childOverride');
       }

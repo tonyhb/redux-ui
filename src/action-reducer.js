@@ -115,7 +115,11 @@ export default function reducer(state = defaultState, action) {
         //       Though why wouldn't you just add a custom reducer to the
         //       top-level component?
         const { path, func } = r;
-        mut.setIn(path, func(mut.getIn(path), action));
+        const newState = func(mut.getIn(path), action);
+        if (newState === undefined) {
+          throw new Error(`Your custom UI reducer at path ${path.join('.')} must return some state`);
+        }
+        mut.setIn(path, newState);
       });
       return mut;
     });
