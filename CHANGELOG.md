@@ -1,3 +1,7 @@
+# v0.0.11
+- Change: Upgrade to babel 6
+- Improve: Throw an error when custom reducers return no state
+
 # v0.0.9
 - Fix: issue where componentWillReceiveProps could break derived state from
   functions within opts.state
