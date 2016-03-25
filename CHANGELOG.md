@@ -1,3 +1,6 @@
+# v0.0.12
+- Add support for redux-immutable
+
 # v0.0.11
 - Change: Upgrade to babel 6
 - Improve: Throw an error when custom reducers return no state
