@@ -16,7 +16,7 @@ export const SET_DEFAULT_UI_STATE = '@@redux-ui/SET_DEFAULT_UI_STATE';
 const MOUNT_UI_STATE = '@@redux-ui/MOUNT_UI_STATE';
 const UNMOUNT_UI_STATE = '@@redux-ui/UNMOUNT_UI_STATE';
 
-const defaultState = new Map({
+export const defaultState = new Map({
   __reducers: new Map({
     // This contains a map of component paths (joined by '.') to an object
     // containing the fully qualified path and the reducer function:

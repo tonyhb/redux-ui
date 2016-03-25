@@ -10,6 +10,7 @@ import { assert } from 'chai';
 import { is, Map } from 'immutable';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
+import { defaultState } from '../../src/action-reducer.js';
 
 const customReducer = (state, action) => {
   if (action.type === 'CUSTOM_ACTION_TYPE') {
@@ -27,7 +28,7 @@ describe('reducerEnhancer', () => {
   });
 
   it('delegates to the default reducer', () => {
-    assert.equal(enhancedStore.getState().ui, new Map());
+    assert.isTrue(is(enhancedStore.getState().ui, defaultState));
 
     enhancedStore.dispatch({
       type: UPDATE_UI_STATE,
@@ -42,6 +43,7 @@ describe('reducerEnhancer', () => {
       is(
         enhancedStore.getState().ui,
         new Map({
+          __reducers: new Map(),
           a: new Map({ foo: 'bar' })
         })
       )
@@ -49,7 +51,8 @@ describe('reducerEnhancer', () => {
   });
 
   it('intercepts custom actions', () => {
-    assert.equal(enhancedStore.getState().ui, new Map());
+    assert.isTrue(is(enhancedStore.getState().ui, defaultState));
+
     enhancedStore.dispatch({
       type: 'CUSTOM_ACTION_TYPE',
       payload: {
@@ -59,7 +62,10 @@ describe('reducerEnhancer', () => {
     assert.isTrue(
       is(
         enhancedStore.getState().ui,
-        new Map({ isHooked: true })
+        new Map({
+          __reducers: new Map(),
+          isHooked: true
+        })
       )
     );
   });
