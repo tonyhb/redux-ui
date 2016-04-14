@@ -1,3 +1,6 @@
+# v0.0.13
+- republish of 0.0.12 due to npm error
+
 # v0.0.12
 - Add support for redux-immutable
 
