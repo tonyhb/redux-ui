@@ -86,16 +86,26 @@ changes).
 
 The decorator takes an object of options:
 
-```
+```js
 @ui({
+  // optional key which is used to determine the UI path in which state will
+  // be stored. if omitted this is randomly generated.
   key: 'some-name',
+  // optional persist, defaults to false. if set to true persist will keep UI
+  // state for this component after it unmounts. if set to false the UI state will
+  // be deleted and recreated when the component remounts
   persist: true,
+  // **required**: UI state for the component
   state: {
     uiVar1: '',
     // You can set default UI state based on the component's props and the
     // global store's state.
     uiVar2: (props, state) => state.router.location.query.searchTerm
-  }
+  },
+  // optional mergeProps passed to react-redux' @connect
+  mergeProps: () => ({}),
+  // optional `options` passed to react-redux @connect
+  options: {}
 })
 ```
 
