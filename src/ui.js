@@ -9,22 +9,27 @@ import { updateUI, massUpdateUI, setDefaultUI, mountUI, unmountUI } from './acti
 
 import { getUIState } from './utils';
 
-const connector = connect(
-  (state) => { return { ui: getUIState(state) }; },
-  (dispatch) => bindActionCreators({
-    updateUI,
-    massUpdateUI,
-    setDefaultUI,
-    mountUI,
-    unmountUI
-  }, dispatch)
-);
-
 export default function ui(key, opts = {}) {
   if (typeof key === 'object') {
     opts = key;
     key = opts.key;
   }
+
+  const connector = connect(
+    (state) => { return { ui: getUIState(state) }; },
+    (dispatch) => bindActionCreators({
+      updateUI,
+      massUpdateUI,
+      setDefaultUI,
+      mountUI,
+      unmountUI
+    }, dispatch),
+    // These allow you to pass 'mergeProps' and 'options' keys into the
+    // UI decorator's options which will be passed to @connect().
+    // TODO: Document
+    opts.mergeProps,
+    opts.options,
+  );
 
   return (WrappedComponent) => {
 
