@@ -58,4 +58,19 @@ describe('resetting UI state', () => {
       assert(child.props.ui.name === 'child');
       assert(parent.props.ui.name === 'a');
   });
+
+  it('evaluates functions within default state correctly', () => {
+    const FunctionalUIChild = ui({
+      state: {
+        evaluated: (props) => props.value
+      }
+    })(Child);
+
+    const child = renderAndFind(<FunctionalUIChild value='foo' />, Child);
+    assert.equal(child.props.ui.evaluated, 'foo');
+    child.props.updateUI({ evaluated: 'next' });
+    assert.equal(child.props.ui.evaluated, 'next');
+    child.props.resetUI();
+    assert.equal(child.props.ui.evaluated, 'foo');
+  });
 });
