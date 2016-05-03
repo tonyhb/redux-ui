@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import TestUtils from 'react-addons-test-utils';
 
 import ui, { reducer } from '../../src';
-import { render } from '../utils/render.js';
+import { render, renderAndFind } from '../utils/render.js';
 
 describe('key generation', () => {
 
@@ -50,6 +50,16 @@ describe('key generation', () => {
 
       // Check basic setup of the UI key within the first component
       assert(uiKey === testKey, 'uiKey matches opts.key');
+    });
+  });
+
+  describe('props.uiPath', () => {
+    it('exposes uiPath', () => {
+      const c = renderAndFind(<WrappedTestWithKey />, Test);
+      const { uiPath } = c.props;
+
+      // Check basic setup of the UI key within the first component
+      assert.equal(uiPath, testKey);
     });
   });
 
