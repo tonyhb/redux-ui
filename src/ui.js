@@ -214,7 +214,7 @@ export default function ui(key, opts = {}) {
         // This is the same as exiting scope in programming; all variables
         // defined within the scope are reset.
         resetUI() {
-          this.props.setDefaultUI(this.uiPath, opts.state);
+          this.props.setDefaultUI(this.uiPath, this.getDefaultUIState(opts.state));
           // TODO: Wipe all child contexts
         }
 
