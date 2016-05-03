@@ -1,3 +1,12 @@
+# v0.0.15
+- Add: Allow `options` and `mergeProps` to be passed to `@connect()`
+- Add: Expose `uiPath` in `this.props.uiPath`
+- Fix state evaluation when parents call resetUI
+- Fix state evaluation when child call resetUI
+
+# v0.0.14
+- Fix: update package.json for react 15
+
 # v0.0.13
 - republish of 0.0.12 due to npm error
 
