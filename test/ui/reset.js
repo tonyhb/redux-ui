@@ -73,4 +73,23 @@ describe('resetting UI state', () => {
     child.props.resetUI();
     assert.equal(child.props.ui.evaluated, 'foo');
   });
+
+  it('calling resetUI from a parent component with a child that has evaluated state works', () => {
+    const FunctionalUIChild = ui({
+      state: {
+        evaluated: (props) => props.value
+      }
+    })(Child);
+
+    const tree = render(<UIParent><FunctionalUIChild value='foo' /></UIParent>);
+    const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
+    const child = TestUtils.findRenderedComponentWithType(tree, Child);
+
+    assert.equal(child.props.ui.evaluated, 'foo');
+    child.props.updateUI({ evaluated: 'next' });
+    assert.equal(child.props.ui.evaluated, 'next');
+    parent.props.resetUI();
+    assert.equal(child.props.ui.evaluated, 'foo');
+  });
+
 });

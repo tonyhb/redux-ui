@@ -132,7 +132,7 @@ export default function ui(key, opts = {}) {
           const ui = getUIState(this.context.store.getState());
           if (ui.getIn(this.uiPath) === undefined && opts.state) {
             const state = this.getDefaultUIState(opts.state, nextProps);
-            this.props.setDefaultUI(this.uiPath, opts.state);
+            this.props.setDefaultUI(this.uiPath, state);
           }
         }
 
