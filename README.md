@@ -145,7 +145,7 @@ All UI variables need to be explicitly defined in the state object.  This allows
 ```js
 import ui from 'redux-ui';
 
-// Componnet A gets its own context with the default UI state below.
+// Component A gets its own context with the default UI state below.
 // `this.props.ui` will contain this state map.
 @ui({
   state: {
