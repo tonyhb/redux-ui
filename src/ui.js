@@ -58,7 +58,8 @@ export default function ui(key, opts = {}) {
 
         constructor(props, ctx, queue) {
           super(props, ctx, queue);
-
+          this.updateUI = this.updateUI.bind(this);
+          this.resetUI = this.resetUI.bind(this);
           // If the key is undefined generate a new random hex key for the
           // current component's UI scope.
           //
@@ -208,8 +209,8 @@ export default function ui(key, opts = {}) {
             uiVars,
             uiPath,
 
-            updateUI: ::this.updateUI,
-            resetUI: ::this.resetUI
+            updateUI: this.updateUI,
+            resetUI: this.resetUI
           };
         }
 
@@ -293,8 +294,8 @@ export default function ui(key, opts = {}) {
               uiKey={ this.key }
               uiPath={ this.uiPath }
               ui={ this.mergeUIProps() }
-              resetUI={ ::this.resetUI }
-              updateUI={ ::this.updateUI } />
+              resetUI={ this.resetUI }
+              updateUI={ this.updateUI } />
           );
         }
       }

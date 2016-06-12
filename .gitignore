@@ -1,2 +1,3 @@
 transpiled
 node_modules
+*.log
