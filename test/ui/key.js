@@ -16,6 +16,7 @@ describe('key generation', () => {
 
   const WrappedTestWithoutKey = ui({})(Test);
   const WrappedTestWithKey = ui({key: testKey})(Test);
+  const WrappedTestWithFunctionKey = ui({key: (props) => (props.id)})(Test);
 
   describe('opts.key === undefined', () => {
     it('assigns a random key to the component', () => {
@@ -50,6 +51,15 @@ describe('key generation', () => {
 
       // Check basic setup of the UI key within the first component
       assert(uiKey === testKey, 'uiKey matches opts.key');
+    });
+
+    it('uses function in key', () => {
+      const testUIKey = 'ui-key'
+      const tree = render(<WrappedTestWithFunctionKey id={testUIKey} />);
+      const c = TestUtils.findRenderedComponentWithType(tree, Test);
+      const { uiKey } = c.props;
+
+      assert(uiKey === testUIKey, 'uiKey matches testUIKey');
     });
   });
 

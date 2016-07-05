@@ -69,6 +69,8 @@ export default function ui(key, opts = {}) {
             this.key = (WrappedComponent.displayName ||
                    WrappedComponent.name) +
                    Math.floor(Math.random() * (1 << 30)).toString(16);
+          } else if (typeof key === 'function') {
+            this.key = key(props)
           } else {
             this.key = key;
           }
