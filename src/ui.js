@@ -290,6 +290,7 @@ export default function ui(key, opts = {}) {
           return (
             <WrappedComponent
               { ...this.props }
+              ref="WrappedComponentInstance"
               uiKey={ this.key }
               uiPath={ this.uiPath }
               ui={ this.mergeUIProps() }
