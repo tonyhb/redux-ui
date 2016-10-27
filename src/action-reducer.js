@@ -35,9 +35,23 @@ export default function reducer(state = defaultState, action) {
   }
 
   // Let ui reducer handle custom actions.
-  if (state.handleAction && state.handleAction.hasOwnProperty(action.type)) {
-    state.handleAction[action.type]();
-  }
+  state.entrySeq().forEach(([key, value]) => {
+    const handleAction = value.get('handleAction');
+    if (handleAction && handleAction.hasOwnProperty(action.type)) {
+      const transforms = handleAction[action.type](value.toObject(), action);
+      state = state.withMutations( s => {
+        Object.keys(transforms).forEach(k => {
+          if (!value.has(k)) {
+            throw new Error(
+              `Couldn't find variable ${k} within your component's UI state ` +
+              `context. Define ${k} before using it in the @ui decorator`
+            );
+          }
+          s.setIn([key, k], transforms[k]);
+        });
+      });
+    }
+  });
 
   switch (action.type) {
     case UPDATE_UI_STATE:
