@@ -34,6 +34,11 @@ export default function reducer(state = defaultState, action) {
     key = [key];
   }
 
+  // Let ui reducer handle custom actions.
+  if (state.handleAction && state.handleAction.hasOwnProperty(action.type)) {
+    state.handleAction[action.type]();
+  }
+
   switch (action.type) {
     case UPDATE_UI_STATE:
       const { name, value } = action.payload;
