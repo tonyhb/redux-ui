@@ -89,7 +89,11 @@ function reducer() {
             name = _action$payload.name,
             value = _action$payload.value;
 
-        state = state.setIn(key.concat(name), value);
+        if (typeof value === 'function') {
+          state = state.updateIn(key.concat(name), value);
+        } else {
+          state = state.setIn(key.concat(name), value);
+        }
         break;
 
       case MASS_UPDATE_UI_STATE:

@@ -106,6 +106,10 @@ function ui(key) {
         // components with no explicit key
         var _this = _possibleConstructorReturn(this, (UI.__proto__ || Object.getPrototypeOf(UI)).call(this, props, ctx, queue));
 
+        if (typeof key === 'function') {
+          key = key(props);
+        }
+
         if (key === undefined) {
           _this.key = (WrappedComponent.displayName || WrappedComponent.name) + Math.floor(Math.random() * (1 << 30)).toString(16);
         } else {
