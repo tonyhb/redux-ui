@@ -1,8 +1,8 @@
 'use strict';
 
-import { assert } from 'chai'; 
+import { assert } from 'chai';
 import React, { Component } from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 
 import ui, { reducer } from '../../src';
@@ -26,7 +26,7 @@ describe('UI state context', () => {
       isValid: true
     };
     const UITest = ui({ state: uiState })(Test);
- 
+
     it('component gets given expected props', () => {
       const c = renderAndFind(<UITest />, Test);
       assert(typeof c.props.updateUI === 'function', 'has updateUI');
@@ -87,8 +87,8 @@ describe('UI state context', () => {
 
     it('child component updates parent variables', () => {
       const tree = render(<UIParent><UIChild /></UIParent>);
-      const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
-      const child = TestUtils.findRenderedComponentWithType(tree, Child);
+      const parent = ReactTestUtils.findRenderedComponentWithType(tree, Parent);
+      const child = ReactTestUtils.findRenderedComponentWithType(tree, Child);
 
       assert(parent.props.ui.name === 'parent');
       assert(child.props.ui.name === 'parent');
@@ -108,8 +108,8 @@ describe('UI state context', () => {
 
     it('child updates own context separately from parent', () => {
       const tree = render(UIChildWithOwnStateJSX);
-      const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
-      const child = TestUtils.findRenderedComponentWithType(tree, Child);
+      const parent = ReactTestUtils.findRenderedComponentWithType(tree, Parent);
+      const child = ReactTestUtils.findRenderedComponentWithType(tree, Child);
       child.updateOwnState();
       assert(child.props.ui.child === 'foo', 'child updates own context');
       assert(parent.props.ui.child === undefined, 'parent has no child state in its context');
@@ -117,8 +117,8 @@ describe('UI state context', () => {
 
     it('child updates parent context', () => {
       const tree = render(UIChildWithOwnStateJSX);
-      const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
-      const child = TestUtils.findRenderedComponentWithType(tree, Child);
+      const parent = ReactTestUtils.findRenderedComponentWithType(tree, Parent);
+      const child = ReactTestUtils.findRenderedComponentWithType(tree, Child);
 
       child.updateParentContext('foobar');
       assert(parent.props.ui.name === 'foobar', 'parent updates context');
@@ -127,8 +127,8 @@ describe('UI state context', () => {
 
     it('parent updating context sends child new context and child receives updates', () => {
       const tree = render(UIChildWithOwnStateJSX);
-      const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
-      const child = TestUtils.findRenderedComponentWithType(tree, Child);
+      const parent = ReactTestUtils.findRenderedComponentWithType(tree, Parent);
+      const child = ReactTestUtils.findRenderedComponentWithType(tree, Child);
 
       parent.updateContext('what');
       assert(parent.props.ui.name === 'what', 'parent updates context');
@@ -145,33 +145,33 @@ describe('UI state context', () => {
 
       it('parent and child store state separately', () => {
         const tree = render(UIChildJSX);
-        const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
-        const child = TestUtils.findRenderedComponentWithType(tree, Child);
+        const parent = ReactTestUtils.findRenderedComponentWithType(tree, Parent);
+        const child = ReactTestUtils.findRenderedComponentWithType(tree, Child);
 
         assert(parent.props.ui.name === 'parent');
         assert(child.props.ui.name === 'child');
-      }); 
+      });
 
       it('parent updates context separately from parent', () => {
         const tree = render(UIChildJSX);
-        const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
-        const child = TestUtils.findRenderedComponentWithType(tree, Child);
+        const parent = ReactTestUtils.findRenderedComponentWithType(tree, Parent);
+        const child = ReactTestUtils.findRenderedComponentWithType(tree, Child);
 
         parent.updateContext('foobar');
         assert(parent.props.ui.name === 'foobar');
         assert(child.props.ui.name === 'child');
-      }); 
+      });
 
 
       it('child updates context separately from parent', () => {
         const tree = render(UIChildJSX);
-        const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
-        const child = TestUtils.findRenderedComponentWithType(tree, Child);
+        const parent = ReactTestUtils.findRenderedComponentWithType(tree, Parent);
+        const child = ReactTestUtils.findRenderedComponentWithType(tree, Child);
 
         child.updateChildContext('foobar');
         assert(parent.props.ui.name === 'parent');
         assert(child.props.ui.name === 'foobar');
-      }); 
+      });
     });
 
   });
@@ -191,8 +191,8 @@ describe('UI state context', () => {
 
     it('components with the same key and nesting share the same context', () => {
         const tree = render(<div><UIFoo /><UIBar /></div>);
-        const a = TestUtils.findRenderedComponentWithType(tree, Foo);
-        const b = TestUtils.findRenderedComponentWithType(tree, Bar);
+        const a = ReactTestUtils.findRenderedComponentWithType(tree, Foo);
+        const b = ReactTestUtils.findRenderedComponentWithType(tree, Bar);
 
         assert(shallowEqual(a.props.ui, b.props.ui));
         a.updateContext();

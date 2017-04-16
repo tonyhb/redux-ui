@@ -4,7 +4,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
 import ui, { reducer } from '../../src';
-import TestUtils from 'react-addons-test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 
 const store = createStore(combineReducers({ ui: reducer }));
 
@@ -18,7 +18,7 @@ const wrapWithProvider = (jsx) => (
 );
 
 const render = (jsx) => {
-  return TestUtils.renderIntoDocument(
+  return ReactTestUtils.renderIntoDocument(
     wrapWithProvider(jsx)
   );
 }
@@ -29,7 +29,7 @@ const renderAndFind = (jsx, type = null) => {
     jsx = <jsx />
   }
   const tree = render(jsx);
-  return TestUtils.findRenderedComponentWithType(tree, type);
+  return ReactTestUtils.findRenderedComponentWithType(tree, type);
 }
 
 export {

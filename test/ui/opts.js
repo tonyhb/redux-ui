@@ -1,8 +1,8 @@
 'use strict';
 
-import { assert } from 'chai'; 
+import { assert } from 'chai';
 import React, { Component } from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 
 import ui, { reducer } from '../../src';
