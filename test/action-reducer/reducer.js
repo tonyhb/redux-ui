@@ -22,7 +22,7 @@ const enhancedReducer = reducerEnhancer(customReducer);
 
 describe('reducerEnhancer', () => {
   let enhancedStore;
-  
+
   beforeEach( () => {
     enhancedStore = createStore(combineReducers({ ui: enhancedReducer }));
   });
@@ -70,4 +70,35 @@ describe('reducerEnhancer', () => {
     );
   });
 
+  it('update ui state by updater', () => {
+    assert.isTrue(is(enhancedStore.getState().ui, defaultState));
+
+    enhancedStore.dispatch({
+      type: UPDATE_UI_STATE,
+      payload: {
+        key: 'foo',
+        name: 'bar',
+        value: 'baz'
+      }
+    });
+
+    enhancedStore.dispatch({
+      type: UPDATE_UI_STATE,
+      payload: {
+        key: 'foo',
+        name: 'bar',
+        value: baz => baz.toUpperCase()
+      }
+    });
+
+    assert.isTrue(
+      is(
+        enhancedStore.getState().ui,
+        new Map({
+          __reducers: new Map(),
+          foo: new Map({ bar: 'BAZ' })
+        })
+      )
+    );
+  });
 });

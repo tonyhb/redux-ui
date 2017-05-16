@@ -37,7 +37,11 @@ export default function reducer(state = defaultState, action) {
   switch (action.type) {
     case UPDATE_UI_STATE:
       const { name, value } = action.payload;
-      state = state.setIn(key.concat(name), value);
+      if (typeof value === 'function') {
+        state = state.updateIn(key.concat(name), value);
+      } else {
+        state = state.setIn(key.concat(name), value);
+      }
       break;
 
     case MASS_UPDATE_UI_STATE:
