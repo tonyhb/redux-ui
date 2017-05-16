@@ -1,7 +1,7 @@
 'use strict';
 
-import React, { Component, PropTypes } from 'react';
-const { any, array, func, node, object, string } = PropTypes;
+import React, { Component } from 'react';
+import { any, array, func, node, object, string } from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import invariant from 'invariant';

@@ -1,8 +1,8 @@
 'use strict';
 
-import { assert } from 'chai'; 
+import { assert } from 'chai';
 import React, { Component } from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 
 import ui, { reducer } from '../../src';
@@ -31,8 +31,8 @@ describe('resetting UI state', () => {
 
   it('resetting a parent UI resets its own AND child contexts', () => {
       const tree = render(<UIParent><UIChild /></UIParent>);
-      const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
-      const child = TestUtils.findRenderedComponentWithType(tree, Child);
+      const parent = ReactTestUtils.findRenderedComponentWithType(tree, Parent);
+      const child = ReactTestUtils.findRenderedComponentWithType(tree, Child);
 
       child.props.updateUI({ name: 'b' });
       parent.props.updateUI({ name: 'a' });
@@ -46,8 +46,8 @@ describe('resetting UI state', () => {
 
   it('resetting a child UI resets only its own context', () => {
       const tree = render(<UIParent><UIChild /></UIParent>);
-      const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
-      const child = TestUtils.findRenderedComponentWithType(tree, Child);
+      const parent = ReactTestUtils.findRenderedComponentWithType(tree, Parent);
+      const child = ReactTestUtils.findRenderedComponentWithType(tree, Child);
 
       child.props.updateUI({ name: 'b' });
       parent.props.updateUI({ name: 'a' });
@@ -82,8 +82,8 @@ describe('resetting UI state', () => {
     })(Child);
 
     const tree = render(<UIParent><FunctionalUIChild value='foo' /></UIParent>);
-    const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
-    const child = TestUtils.findRenderedComponentWithType(tree, Child);
+    const parent = ReactTestUtils.findRenderedComponentWithType(tree, Parent);
+    const child = ReactTestUtils.findRenderedComponentWithType(tree, Child);
 
     assert.equal(child.props.ui.evaluated, 'foo');
     child.props.updateUI({ evaluated: 'next' });

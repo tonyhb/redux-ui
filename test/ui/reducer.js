@@ -1,11 +1,11 @@
 'use strict';
 
-import { assert } from 'chai'; 
+import { assert } from 'chai';
 
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { is, Map } from 'immutable';
-import TestUtils from 'react-addons-test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 
 import ui, { reducer } from '../../src';
@@ -90,8 +90,8 @@ describe('with a custom reducer', () => {
 
     it('only gets given the UI state for the current component', () => {
       const tree = render(<UIParent><UIChild /></UIParent>, Parent);
-      const parent = TestUtils.findRenderedComponentWithType(tree, Parent);
-      const child = TestUtils.findRenderedComponentWithType(tree, Child);
+      const parent = ReactTestUtils.findRenderedComponentWithType(tree, Parent);
+      const child = ReactTestUtils.findRenderedComponentWithType(tree, Child);
 
       store.dispatch({ type: 'CUSTOM' });
       // The reducerState should equal the default reducer state for our child

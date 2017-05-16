@@ -1,8 +1,8 @@
 'use strict';
 
-import { assert } from 'chai'; 
+import { assert } from 'chai';
 import React, { Component } from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 
 import ui, { reducer } from '../../src';
 import { render, renderAndFind } from '../utils/render.js';
@@ -26,7 +26,7 @@ describe('key generation', () => {
           <WrappedTestWithoutKey />
         </div>
       );
-      const comps = TestUtils
+      const comps = ReactTestUtils
         .scryRenderedComponentsWithType(tree, Test);
       const { uiKey } = comps[0].props;
 
@@ -45,7 +45,7 @@ describe('key generation', () => {
   describe('opts.key !== undefined', () => {
     it('uses the specified key', () => {
       const tree = render(<WrappedTestWithKey />);
-      const c = TestUtils.findRenderedComponentWithType(tree, Test);
+      const c = ReactTestUtils.findRenderedComponentWithType(tree, Test);
       const { uiKey } = c.props;
 
       // Check basic setup of the UI key within the first component
