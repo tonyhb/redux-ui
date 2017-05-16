@@ -1,3 +1,7 @@
+# v0.1.0
+- Update dependencies to work with React 15 (thanks @kurtfunai)
+- Allow functions inside updateUI (`this.props.updateUI('username', v => v.toUpperCase());`)
+
 # v0.0.15
 - Add: Allow `options` and `mergeProps` to be passed to `@connect()`
 - Add: Expose `uiPath` in `this.props.uiPath`
