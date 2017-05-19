@@ -102,6 +102,18 @@ The decorator takes an object of options:
     // global store's state.
     uiVar2: (props, state) => state.router.location.query.searchTerm
   },
+  // customReducer: you can handle the UI state for this component's scope by dispatching actions
+  reducer: (state, action) => {
+    // state represents *only* the UI state for this component's scope - not any children
+    switch(action.type) {
+      case '@@reduxReactRouter/routerDidChange':
+        if (action.payload.location.query.extra_filters) {
+          return state.set('extraFilters', true);
+        }
+      }
+      return state;
+    }
+  },
   // optional mergeProps passed to react-redux' @connect
   mergeProps: () => ({}),
   // optional `options` passed to react-redux @connect
@@ -216,3 +228,4 @@ All of these goals should be easy to achieve.
 MIT license.
 
 Written by [Franklin Ta](https://github.com/fta2012) and [Tony Holdstock-Brown](https://github.com/tonyhb).
+
