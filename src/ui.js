@@ -65,6 +65,10 @@ export default function ui(key, opts = {}) {
           // We do this in construct() to guarantee a new key at component
           // instantiation time wihch is needed for iterating through a list of
           // components with no explicit key
+          if (typeof key === 'function') {
+            key = key(props);
+          }
+
           if (key === undefined) {
             this.key = (WrappedComponent.displayName ||
                    WrappedComponent.name) +
@@ -290,6 +294,7 @@ export default function ui(key, opts = {}) {
           return (
             <WrappedComponent
               { ...this.props }
+              ref="WrappedComponentInstance"
               uiKey={ this.key }
               uiPath={ this.uiPath }
               ui={ this.mergeUIProps() }
