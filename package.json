@@ -4,8 +4,8 @@
   "description": "UI state management for Redux and React",
   "main": "transpiled/index.js",
   "scripts": {
-    "prepublish": "$(npm bin)/babel -d transpiled src",
-    "test": "$(npm bin)/mocha  --compilers js:babel-register --recursive --require ./test/setup.js"
+    "prepublish": "babel -d transpiled src",
+    "test": "mocha  --compilers js:babel-register --recursive --require ./test/setup.js"
   },
   "repository": {
     "type": "git",
