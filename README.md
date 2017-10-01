@@ -208,6 +208,7 @@ class C extends Component {
         <p>I have my own UI state C and inherit UI state from B and A</p>
         <p>If I define variables which collide with B or A mine will
         be used, as it is the most specific context.</p>
+      </div>
     );
   }
 }
