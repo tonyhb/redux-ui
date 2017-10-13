@@ -9,6 +9,10 @@ import { updateUI, massUpdateUI, setDefaultUI, mountUI, unmountUI } from './acti
 
 import { getUIState } from './utils';
 
+function getDisplayName(WrappedComponent) {
+  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
+}
+
 export default function ui(key, opts = {}) {
   if (typeof key === 'object') {
     opts = key;
@@ -77,6 +81,8 @@ export default function ui(key, opts = {}) {
           // context in class instantiation
           this.getMergedContextVars(ctx);
         }
+
+        static displayName = `UI(${getDisplayName(WrappedComponent)})`
 
         static propTypes = {
           // The entire global UI state via react-redux connector
