@@ -292,15 +292,10 @@ export default function ui(key, opts = {}) {
           // If this slice of the UI has not changed (shallow comparison),
           // then use an old copy of the slice to prevent unnecessary
           // re-rendering
-          if (opts.shallowCompare) {
-              if (!shallowCompare(this.__previousMergeResult, result)) {
-                  this.__previousMergeResult = result;
-              }
-              return this.__previousMergeResult;
-          } else {
-              return result;
+          if (!shallowCompare(this.__previousMergeResult, result)) {
+            this.__previousMergeResult = result;
           }
-
+            return this.__previousMergeResult;
         }
 
         render() {
