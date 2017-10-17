@@ -5,6 +5,7 @@ import { any, array, func, node, object, string } from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import invariant from 'invariant';
+import shallowCompare from 'react-pure-render/shallowEqual';
 import { updateUI, massUpdateUI, setDefaultUI, mountUI, unmountUI } from './action-reducer';
 
 import { getUIState } from './utils';
@@ -58,6 +59,9 @@ export default function ui(key, opts = {}) {
 
         constructor(props, ctx, queue) {
           super(props, ctx, queue);
+
+          this.resetUI = this.resetUI.bind(this);
+          this.updateUI = this.updateUI.bind(this);
 
           // If the key is undefined generate a new random hex key for the
           // current component's UI scope.
@@ -208,8 +212,8 @@ export default function ui(key, opts = {}) {
             uiVars,
             uiPath,
 
-            updateUI: ::this.updateUI,
-            resetUI: ::this.resetUI
+            updateUI: this.updateUI,
+            resetUI: this.resetUI
           };
         }
 
@@ -280,10 +284,23 @@ export default function ui(key, opts = {}) {
           // changes in other cases.
           const ui = getUIState(this.context.store.getState());
 
-          return Object.keys(this.uiVars).reduce((props, k) => {
+          const result = Object.keys(this.uiVars).reduce((props, k) => {
             props[k] = ui.getIn(this.uiVars[k].concat(k));
             return props;
           }, {}) || {};
+
+          // If this slice of the UI has not changed (shallow comparison),
+          // then use an old copy of the slice to prevent unnecessary
+          // re-rendering
+          if (opts.shallowCompare) {
+              if (!shallowCompare(this.__previousMergeResult, result)) {
+                  this.__previousMergeResult = result;
+              }
+              return this.__previousMergeResult;
+          } else {
+              return result;
+          }
+
         }
 
         render() {
@@ -293,8 +310,8 @@ export default function ui(key, opts = {}) {
               uiKey={ this.key }
               uiPath={ this.uiPath }
               ui={ this.mergeUIProps() }
-              resetUI={ ::this.resetUI }
-              updateUI={ ::this.updateUI } />
+              resetUI={ this.resetUI }
+              updateUI={ this.updateUI } />
           );
         }
       }

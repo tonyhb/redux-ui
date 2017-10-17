@@ -40,7 +40,8 @@
     "invariant": "^2.2.0",
     "prop-types": "^15.5.7",
     "react-redux": "^4.4.8 || ^5.0.4",
-    "redux": "^3.0.4"
+    "redux": "^3.0.4",
+    "react-pure-render": "^1.0.2"
   },
   "peerDependencies": {
     "react": "^0.14.9 || ^15.3.0 || ^16.0.0"
