@@ -5,7 +5,6 @@
   "main": "transpiled/index.js",
   "scripts": {
     "prepublish": "$(npm bin)/babel -d transpiled src",
-    "postinstall": "$(npm bin)/babel -d transpiled src",
     "test": "$(npm bin)/mocha  --compilers js:babel-register --recursive --require ./test/setup.js"
   },
   "repository": {
