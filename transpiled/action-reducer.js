@@ -147,9 +147,11 @@ function reducer() {
 
         var newState = func(mut.getIn(path), action);
         if (newState === undefined) {
-          throw new Error('Your custom UI reducer at path ' + path.join('.') + ' must return some state');
+          // Mute exception
+          // throw new Error(`Your custom UI reducer at path ${path.join('.')} must return some state`);
+        } else {
+          mut.setIn(path, newState);
         }
-        mut.setIn(path, newState);
       });
       return mut;
     });
