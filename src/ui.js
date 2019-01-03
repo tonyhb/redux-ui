@@ -38,10 +38,12 @@ export default function ui(key, opts = {}) {
         class React16UIWrapper extends Component {
 
             render() {
+                const props = this.props
+
                 return <ReactReduxContext.Consumer>
                     {({ store }) => {
                         <WrappedComponent store={store}
-                                          {...this.props} />
+                                          {...props} />
                     }}
 
                 </ReactReduxContext.Consumer>

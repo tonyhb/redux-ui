@@ -83,7 +83,7 @@ function ui(key) {
       _createClass(React16UIWrapper, [{
         key: 'render',
         value: function render() {
-          var _this2 = this;
+          var props = this.props;
 
           return _react2.default.createElement(
             _reactRedux.ReactReduxContext.Consumer,
@@ -92,7 +92,7 @@ function ui(key) {
               var store = _ref.store;
 
               _react2.default.createElement(WrappedComponent, _extends({ store: store
-              }, _this2.props));
+              }, props));
             }
           );
         }
@@ -114,10 +114,10 @@ function ui(key) {
       function UI(props, ctx, queue) {
         _classCallCheck(this, UI);
 
-        var _this3 = _possibleConstructorReturn(this, (UI.__proto__ || Object.getPrototypeOf(UI)).call(this, props, ctx, queue));
+        var _this2 = _possibleConstructorReturn(this, (UI.__proto__ || Object.getPrototypeOf(UI)).call(this, props, ctx, queue));
 
-        _this3.resetUI = _this3.resetUI.bind(_this3);
-        _this3.updateUI = _this3.updateUI.bind(_this3);
+        _this2.resetUI = _this2.resetUI.bind(_this2);
+        _this2.updateUI = _this2.updateUI.bind(_this2);
 
         // If the key is undefined generate a new random hex key for the
         // current component's UI scope.
@@ -126,15 +126,15 @@ function ui(key) {
         // instantiation time wihch is needed for iterating through a list of
         // components with no explicit key
         if (key === undefined) {
-          _this3.key = (WrappedComponent.displayName || WrappedComponent.name) + Math.floor(Math.random() * (1 << 30)).toString(16);
+          _this2.key = (WrappedComponent.displayName || WrappedComponent.name) + Math.floor(Math.random() * (1 << 30)).toString(16);
         } else {
-          _this3.key = key;
+          _this2.key = key;
         }
 
         // Immediately set this.uiPath and this.uiVars based on the incoming
         // context in class instantiation
-        _this3.getMergedContextVars(ctx);
-        return _this3;
+        _this2.getMergedContextVars(ctx);
+        return _this2;
       }
 
       // Pass these down in the new context created for this component
@@ -181,7 +181,7 @@ function ui(key) {
       }, {
         key: 'getDefaultUIState',
         value: function getDefaultUIState(uiState) {
-          var _this4 = this;
+          var _this3 = this;
 
           var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.props;
 
@@ -189,7 +189,7 @@ function ui(key) {
           var state = _extends({}, uiState);
           Object.keys(state).forEach(function (k) {
             if (typeof state[k] === 'function') {
-              state[k] = state[k](_this4.props, globalState);
+              state[k] = state[k](_this3.props, globalState);
             }
           });
           return state;
@@ -209,12 +209,12 @@ function ui(key) {
       }, {
         key: 'componentWillUnmount',
         value: function componentWillUnmount() {
-          var _this5 = this;
+          var _this4 = this;
 
           if (opts.persist !== true) {
             if (window && window.requestAnimationFrame) {
               window.requestAnimationFrame(function () {
-                return _this5.props.unmountUI(_this5.uiPath);
+                return _this4.props.unmountUI(_this4.uiPath);
               });
             } else {
               this.props.unmountUI(this.uiPath);
@@ -230,7 +230,7 @@ function ui(key) {
       }, {
         key: 'getMergedContextVars',
         value: function getMergedContextVars() {
-          var _this6 = this;
+          var _this5 = this;
 
           var ctx = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.context;
 
@@ -242,7 +242,7 @@ function ui(key) {
             var state = opts.state || {};
             this.uiVars = _extends({}, ctx.uiVars) || {};
             Object.keys(state).forEach(function (k) {
-              return _this6.uiVars[k] = _this6.uiPath;
+              return _this5.uiVars[k] = _this5.uiPath;
             }, this);
           }
 
@@ -318,7 +318,7 @@ function ui(key) {
       }, {
         key: 'mergeUIProps',
         value: function mergeUIProps() {
-          var _this7 = this;
+          var _this6 = this;
 
           // WARNING: React has a subtle componentWillMount bug which we're
           // working around here!
@@ -347,7 +347,7 @@ function ui(key) {
           var ui = (0, _utils.getUIState)(this.context.store.getState());
 
           var result = Object.keys(this.uiVars).reduce(function (props, k) {
-            props[k] = ui.getIn(_this7.uiVars[k].concat(k));
+            props[k] = ui.getIn(_this6.uiVars[k].concat(k));
             return props;
           }, {}) || {};
 
