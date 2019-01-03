@@ -34,8 +34,6 @@ var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 
 var _actionReducer = require('./action-reducer');
 
-var _React16UI = require('./React16UI.js');
-
 var _utils = require('./utils');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -70,19 +68,56 @@ function ui(key) {
   // TODO: Document
   opts.mergeProps, opts.options);
 
-  return function (WrappedComponent) {
-    var _dec, _class, _class2, _temp;
+  var React16UI = function React16UI(WrappedComponent) {
+    var _dec, _class;
 
-    var UI = (_dec = (0, _React16UI.React16UI)(), _dec(_class = (_temp = _class2 = function (_Component) {
-      _inherits(UI, _Component);
+    var React16UIWrapper = (_dec = (0, _reactRedux.connect)(), _dec(_class = function (_Component) {
+      _inherits(React16UIWrapper, _Component);
+
+      function React16UIWrapper() {
+        _classCallCheck(this, React16UIWrapper);
+
+        return _possibleConstructorReturn(this, (React16UIWrapper.__proto__ || Object.getPrototypeOf(React16UIWrapper)).apply(this, arguments));
+      }
+
+      _createClass(React16UIWrapper, [{
+        key: 'render',
+        value: function render() {
+          var _this2 = this;
+
+          return _react2.default.createElement(
+            _reactRedux.ReactReduxContext.Consumer,
+            null,
+            function (_ref) {
+              var store = _ref.store;
+
+              _react2.default.createElement(WrappedComponent, _extends({ store: store
+              }, _this2.props));
+            }
+          );
+        }
+      }]);
+
+      return React16UIWrapper;
+    }(_react.Component)) || _class);
+
+
+    return React16UIWrapper;
+  };
+
+  return function (WrappedComponent) {
+    var _dec2, _class2, _class3, _temp;
+
+    var UI = (_dec2 = React16UI(), _dec2(_class2 = (_temp = _class3 = function (_Component2) {
+      _inherits(UI, _Component2);
 
       function UI(props, ctx, queue) {
         _classCallCheck(this, UI);
 
-        var _this = _possibleConstructorReturn(this, (UI.__proto__ || Object.getPrototypeOf(UI)).call(this, props, ctx, queue));
+        var _this3 = _possibleConstructorReturn(this, (UI.__proto__ || Object.getPrototypeOf(UI)).call(this, props, ctx, queue));
 
-        _this.resetUI = _this.resetUI.bind(_this);
-        _this.updateUI = _this.updateUI.bind(_this);
+        _this3.resetUI = _this3.resetUI.bind(_this3);
+        _this3.updateUI = _this3.updateUI.bind(_this3);
 
         // If the key is undefined generate a new random hex key for the
         // current component's UI scope.
@@ -91,15 +126,15 @@ function ui(key) {
         // instantiation time wihch is needed for iterating through a list of
         // components with no explicit key
         if (key === undefined) {
-          _this.key = (WrappedComponent.displayName || WrappedComponent.name) + Math.floor(Math.random() * (1 << 30)).toString(16);
+          _this3.key = (WrappedComponent.displayName || WrappedComponent.name) + Math.floor(Math.random() * (1 << 30)).toString(16);
         } else {
-          _this.key = key;
+          _this3.key = key;
         }
 
         // Immediately set this.uiPath and this.uiVars based on the incoming
         // context in class instantiation
-        _this.getMergedContextVars(ctx);
-        return _this;
+        _this3.getMergedContextVars(ctx);
+        return _this3;
       }
 
       // Pass these down in the new context created for this component
@@ -146,7 +181,7 @@ function ui(key) {
       }, {
         key: 'getDefaultUIState',
         value: function getDefaultUIState(uiState) {
-          var _this2 = this;
+          var _this4 = this;
 
           var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.props;
 
@@ -154,7 +189,7 @@ function ui(key) {
           var state = _extends({}, uiState);
           Object.keys(state).forEach(function (k) {
             if (typeof state[k] === 'function') {
-              state[k] = state[k](_this2.props, globalState);
+              state[k] = state[k](_this4.props, globalState);
             }
           });
           return state;
@@ -174,12 +209,12 @@ function ui(key) {
       }, {
         key: 'componentWillUnmount',
         value: function componentWillUnmount() {
-          var _this3 = this;
+          var _this5 = this;
 
           if (opts.persist !== true) {
             if (window && window.requestAnimationFrame) {
               window.requestAnimationFrame(function () {
-                return _this3.props.unmountUI(_this3.uiPath);
+                return _this5.props.unmountUI(_this5.uiPath);
               });
             } else {
               this.props.unmountUI(this.uiPath);
@@ -195,7 +230,7 @@ function ui(key) {
       }, {
         key: 'getMergedContextVars',
         value: function getMergedContextVars() {
-          var _this4 = this;
+          var _this6 = this;
 
           var ctx = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.context;
 
@@ -207,7 +242,7 @@ function ui(key) {
             var state = opts.state || {};
             this.uiVars = _extends({}, ctx.uiVars) || {};
             Object.keys(state).forEach(function (k) {
-              return _this4.uiVars[k] = _this4.uiPath;
+              return _this6.uiVars[k] = _this6.uiPath;
             }, this);
           }
 
@@ -283,7 +318,7 @@ function ui(key) {
       }, {
         key: 'mergeUIProps',
         value: function mergeUIProps() {
-          var _this5 = this;
+          var _this7 = this;
 
           // WARNING: React has a subtle componentWillMount bug which we're
           // working around here!
@@ -312,7 +347,7 @@ function ui(key) {
           var ui = (0, _utils.getUIState)(this.context.store.getState());
 
           var result = Object.keys(this.uiVars).reduce(function (props, k) {
-            props[k] = ui.getIn(_this5.uiVars[k].concat(k));
+            props[k] = ui.getIn(_this7.uiVars[k].concat(k));
             return props;
           }, {}) || {};
 
@@ -337,13 +372,13 @@ function ui(key) {
       }]);
 
       return UI;
-    }(_react.Component), _class2.propTypes = {
+    }(_react.Component), _class3.propTypes = {
       // The entire global UI state via react-redux connector
       ui: _propTypes.object.isRequired,
       // These actions are passed via react-redux connector
       setDefaultUI: _propTypes.func.isRequired,
       updateUI: _propTypes.func.isRequired,
-      massUpdateUI: _propTypes.func.isRequired }, _class2.childContextTypes = {
+      massUpdateUI: _propTypes.func.isRequired }, _class3.childContextTypes = {
       // uiKey is the name of the parent context's key
       uiKey: _propTypes.string,
       // uiPath is the current path of the UI context
@@ -354,7 +389,7 @@ function ui(key) {
 
       // Actions to pass to children
       updateUI: _propTypes.func,
-      resetUI: _propTypes.func }, _class2.contextTypes = {
+      resetUI: _propTypes.func }, _class3.contextTypes = {
       // This is used in mergeUIProps and construct() to immediately set
       // props.
       store: _propTypes.any,
@@ -365,9 +400,9 @@ function ui(key) {
 
       updateUI: _propTypes.func,
       resetUI: _propTypes.func
-    }, _temp)) || _class);
+    }, _temp)) || _class2);
 
 
-    return connector(UI);
+    return React16UI(connector(UI));
   };
 }

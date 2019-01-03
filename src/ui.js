@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import invariant from 'invariant';
 import shallowCompare from 'react-pure-render/shallowEqual';
 import { updateUI, massUpdateUI, setDefaultUI, mountUI, unmountUI } from './action-reducer';
-import { React16UI } from "./React16UI.js"
+import { ReactReduxContext } from 'react-redux'
 
 import { getUIState } from './utils';
 
@@ -32,6 +32,24 @@ export default function ui(key, opts = {}) {
     opts.mergeProps,
     opts.options,
   );
+
+    const React16UI = (WrappedComponent) => {
+        @connect()
+        class React16UIWrapper extends Component {
+
+            render() {
+                return <ReactReduxContext.Consumer>
+                    {({ store }) => {
+                        <WrappedComponent store={store}
+                                          {...this.props} />
+                    }}
+
+                </ReactReduxContext.Consumer>
+            }
+        }
+
+        return React16UIWrapper
+    }
 
   return (WrappedComponent) => {
 
@@ -313,6 +331,6 @@ export default function ui(key, opts = {}) {
         }
       }
 
-      return connector(UI);
+      return React16UI(connector(UI));
   }
 }
