@@ -42,7 +42,7 @@ export default function ui(key, opts = {}) {
 
                     return <ReactReduxContext.Consumer>
                         {({ store }) => {
-                            <WrappedComponent store={store}
+                            return <WrappedComponent store={store}
                                               {...props} />
                         }}
 

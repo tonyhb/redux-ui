@@ -90,7 +90,7 @@ function ui(key) {
               function (_ref) {
                 var store = _ref.store;
 
-                _react2.default.createElement(WrappedComponent, _extends({ store: store
+                return _react2.default.createElement(WrappedComponent, _extends({ store: store
                 }, props));
               }
             );
