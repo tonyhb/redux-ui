@@ -34,7 +34,7 @@ var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 
 var _actionReducer = require('./action-reducer');
 
-var _React16UI = require('./React16UI');
+var _React16UI = require('./React16UI.js');
 
 var _utils = require('./utils');
 
