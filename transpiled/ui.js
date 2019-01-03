@@ -170,7 +170,7 @@ function ui(key) {
           // set ensure we update our global store with the current state.
           if (this.props.ui.getIn(this.uiPath) === undefined && opts.state) {
             var state = this.getDefaultUIState(opts.state);
-            this.context.store.dispatch((0, _actionReducer.mountUI)(this.uiPath, state, opts.reducer));
+            this.props.store.dispatch((0, _actionReducer.mountUI)(this.uiPath, state, opts.reducer));
           }
         }
 
@@ -186,7 +186,7 @@ function ui(key) {
           // We can only see if this component's state is blown away by
           // accessing the current global UI state; the parent will not
           // necessarily always pass down child state.
-          var ui = (0, _utils.getUIState)(this.context.store.getState());
+          var ui = (0, _utils.getUIState)(this.props.store.getState());
           if (ui.getIn(this.uiPath) === undefined && opts.state) {
             var state = this.getDefaultUIState(opts.state, nextProps);
             this.props.setDefaultUI(this.uiPath, state);
@@ -205,7 +205,7 @@ function ui(key) {
 
           var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.props;
 
-          var globalState = this.context.store.getState();
+          var globalState = this.props.store.getState();
           var state = _extends({}, uiState);
           Object.keys(state).forEach(function (k) {
             if (typeof state[k] === 'function') {
@@ -364,7 +364,7 @@ function ui(key) {
           //
           // We still use @connect() to connect to the store and listen for
           // changes in other cases.
-          var ui = (0, _utils.getUIState)(this.context.store.getState());
+          var ui = (0, _utils.getUIState)(this.props.store.getState());
 
           var result = Object.keys(this.uiVars).reduce(function (props, k) {
             props[k] = ui.getIn(_this6.uiVars[k].concat(k));
