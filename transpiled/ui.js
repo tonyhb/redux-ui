@@ -69,9 +69,7 @@ function ui(key) {
   opts.mergeProps, opts.options);
 
   var React16UI = function React16UI(WrappedComponent) {
-    var _dec, _class;
-
-    var React16UIWrapper = (_dec = (0, _reactRedux.connect)(), _dec(_class = function (_Component) {
+    var React16UIWrapper = function (_Component) {
       _inherits(React16UIWrapper, _Component);
 
       function React16UIWrapper() {
@@ -99,16 +97,15 @@ function ui(key) {
       }]);
 
       return React16UIWrapper;
-    }(_react.Component)) || _class);
-
+    }(_react.Component);
 
     return React16UIWrapper;
   };
 
   return function (WrappedComponent) {
-    var _dec2, _class2, _class3, _temp;
+    var _dec, _class, _class2, _temp;
 
-    var UI = (_dec2 = React16UI(), _dec2(_class2 = (_temp = _class3 = function (_Component2) {
+    var UI = (_dec = React16UI(), _dec(_class = (_temp = _class2 = function (_Component2) {
       _inherits(UI, _Component2);
 
       function UI(props, ctx, queue) {
@@ -372,13 +369,13 @@ function ui(key) {
       }]);
 
       return UI;
-    }(_react.Component), _class3.propTypes = {
+    }(_react.Component), _class2.propTypes = {
       // The entire global UI state via react-redux connector
       ui: _propTypes.object.isRequired,
       // These actions are passed via react-redux connector
       setDefaultUI: _propTypes.func.isRequired,
       updateUI: _propTypes.func.isRequired,
-      massUpdateUI: _propTypes.func.isRequired }, _class3.childContextTypes = {
+      massUpdateUI: _propTypes.func.isRequired }, _class2.childContextTypes = {
       // uiKey is the name of the parent context's key
       uiKey: _propTypes.string,
       // uiPath is the current path of the UI context
@@ -389,7 +386,7 @@ function ui(key) {
 
       // Actions to pass to children
       updateUI: _propTypes.func,
-      resetUI: _propTypes.func }, _class3.contextTypes = {
+      resetUI: _propTypes.func }, _class2.contextTypes = {
       // This is used in mergeUIProps and construct() to immediately set
       // props.
       store: _propTypes.any,
@@ -400,9 +397,9 @@ function ui(key) {
 
       updateUI: _propTypes.func,
       resetUI: _propTypes.func
-    }, _temp)) || _class2);
+    }, _temp)) || _class);
 
 
-    return React16UI(connector(UI));
+    return connector(React16UI(UI));
   };
 }

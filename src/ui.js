@@ -34,7 +34,6 @@ export default function ui(key, opts = {}) {
   );
 
     const React16UI = (WrappedComponent) => {
-        @connect()
         class React16UIWrapper extends Component {
 
             render() {
@@ -333,6 +332,6 @@ export default function ui(key, opts = {}) {
         }
       }
 
-      return React16UI(connector(UI));
+      return connector(React16UI(UI));
   }
 }
