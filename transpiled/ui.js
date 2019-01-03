@@ -68,38 +68,40 @@ function ui(key) {
   // TODO: Document
   opts.mergeProps, opts.options);
 
-  var React16UI = function React16UI(WrappedComponent) {
-    var React16UIWrapper = function (_Component) {
-      _inherits(React16UIWrapper, _Component);
+  var React16UI = function React16UI() {
+    return function (WrappedComponent) {
+      var React16UIWrapper = function (_Component) {
+        _inherits(React16UIWrapper, _Component);
 
-      function React16UIWrapper() {
-        _classCallCheck(this, React16UIWrapper);
+        function React16UIWrapper() {
+          _classCallCheck(this, React16UIWrapper);
 
-        return _possibleConstructorReturn(this, (React16UIWrapper.__proto__ || Object.getPrototypeOf(React16UIWrapper)).apply(this, arguments));
-      }
-
-      _createClass(React16UIWrapper, [{
-        key: 'render',
-        value: function render() {
-          var props = this.props;
-
-          return _react2.default.createElement(
-            _reactRedux.ReactReduxContext.Consumer,
-            null,
-            function (_ref) {
-              var store = _ref.store;
-
-              _react2.default.createElement(WrappedComponent, _extends({ store: store
-              }, props));
-            }
-          );
+          return _possibleConstructorReturn(this, (React16UIWrapper.__proto__ || Object.getPrototypeOf(React16UIWrapper)).apply(this, arguments));
         }
-      }]);
+
+        _createClass(React16UIWrapper, [{
+          key: 'render',
+          value: function render() {
+            var props = this.props;
+
+            return _react2.default.createElement(
+              _reactRedux.ReactReduxContext.Consumer,
+              null,
+              function (_ref) {
+                var store = _ref.store;
+
+                _react2.default.createElement(WrappedComponent, _extends({ store: store
+                }, props));
+              }
+            );
+          }
+        }]);
+
+        return React16UIWrapper;
+      }(_react.Component);
 
       return React16UIWrapper;
-    }(_react.Component);
-
-    return React16UIWrapper;
+    };
   };
 
   return function (WrappedComponent) {

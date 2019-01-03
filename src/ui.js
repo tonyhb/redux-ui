@@ -33,23 +33,25 @@ export default function ui(key, opts = {}) {
     opts.options,
   );
 
-    const React16UI = (WrappedComponent) => {
-        class React16UIWrapper extends Component {
+    const React16UI = () => {
+        return (WrappedComponent) => {
+            class React16UIWrapper extends Component {
 
-            render() {
-                const props = this.props
+                render() {
+                    const props = this.props
 
-                return <ReactReduxContext.Consumer>
-                    {({ store }) => {
-                        <WrappedComponent store={store}
-                                          {...props} />
-                    }}
+                    return <ReactReduxContext.Consumer>
+                        {({ store }) => {
+                            <WrappedComponent store={store}
+                                              {...props} />
+                        }}
 
-                </ReactReduxContext.Consumer>
+                    </ReactReduxContext.Consumer>
+                }
             }
-        }
 
-        return React16UIWrapper
+            return React16UIWrapper
+        }
     }
 
   return (WrappedComponent) => {
