@@ -333,6 +333,6 @@ export default function ui(key, opts = {}) {
         }
       }
 
-      return connector(React16UI(UI));
+      return connector(React16UI()(UI));
   }
 }

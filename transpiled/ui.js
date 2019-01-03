@@ -423,6 +423,6 @@ function ui(key) {
     }, _temp);
 
 
-    return connector(React16UI(UI));
+    return connector(React16UI()(UI));
   };
 }
