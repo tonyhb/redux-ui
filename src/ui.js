@@ -77,7 +77,6 @@ export default function ui(key, opts = {}) {
        *
        * All state will be blown away on navigation by default.
        */
-      @React16UI()
       class UI extends Component {
 
         constructor(props, ctx, queue) {
