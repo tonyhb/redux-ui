@@ -34,6 +34,8 @@ var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 
 var _actionReducer = require('./action-reducer');
 
+var _React16UI = require('./React16UI');
+
 var _utils = require('./utils');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -69,30 +71,9 @@ function ui(key) {
   opts.mergeProps, opts.options);
 
   return function (WrappedComponent) {
-    var _class, _temp;
+    var _dec, _class, _class2, _temp;
 
-    // Return a parent UI class which scopes all UI state to the given key
-    return connector((
-    /**
-     * UI is a wrapper component which:
-     *   1. Inherits any parent scopes from parent components that are wrapped
-     *      by @UI
-     *   2. Sets up a new UI scope for the current component
-     *   3. Merges the current UI scope into the parent UI scope (where the
-     *      current scope takes precedence over parents)
-     *
-     * This allows normal block-scoping of UI state:
-     *
-     *   1. All UI components must define their local state keys
-     *   2. Upon updating a state key, if it's not in the current scope
-     *      walk up the tree until the variable is set
-     *
-     * This means that any child component can affect the current browser
-     * chrome's UI state whilst maintaining their own local UI state.
-     *
-     * All state will be blown away on navigation by default.
-     */
-    _temp = _class = function (_Component) {
+    var UI = (_dec = (0, _React16UI.React16UI)(), _dec(_class = (_temp = _class2 = function (_Component) {
       _inherits(UI, _Component);
 
       function UI(props, ctx, queue) {
@@ -356,13 +337,13 @@ function ui(key) {
       }]);
 
       return UI;
-    }(_react.Component), _class.propTypes = {
+    }(_react.Component), _class2.propTypes = {
       // The entire global UI state via react-redux connector
       ui: _propTypes.object.isRequired,
       // These actions are passed via react-redux connector
       setDefaultUI: _propTypes.func.isRequired,
       updateUI: _propTypes.func.isRequired,
-      massUpdateUI: _propTypes.func.isRequired }, _class.childContextTypes = {
+      massUpdateUI: _propTypes.func.isRequired }, _class2.childContextTypes = {
       // uiKey is the name of the parent context's key
       uiKey: _propTypes.string,
       // uiPath is the current path of the UI context
@@ -373,7 +354,7 @@ function ui(key) {
 
       // Actions to pass to children
       updateUI: _propTypes.func,
-      resetUI: _propTypes.func }, _class.contextTypes = {
+      resetUI: _propTypes.func }, _class2.contextTypes = {
       // This is used in mergeUIProps and construct() to immediately set
       // props.
       store: _propTypes.any,
@@ -384,6 +365,9 @@ function ui(key) {
 
       updateUI: _propTypes.func,
       resetUI: _propTypes.func
-    }, _temp));
+    }, _temp)) || _class);
+
+
+    return connector(UI);
   };
 }

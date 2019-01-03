@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import invariant from 'invariant';
 import shallowCompare from 'react-pure-render/shallowEqual';
 import { updateUI, massUpdateUI, setDefaultUI, mountUI, unmountUI } from './action-reducer';
+import { React16UI } from "./React16UI"
 
 import { getUIState } from './utils';
 
@@ -35,7 +36,7 @@ export default function ui(key, opts = {}) {
   return (WrappedComponent) => {
 
     // Return a parent UI class which scopes all UI state to the given key
-    return connector(
+
       /**
        * UI is a wrapper component which:
        *   1. Inherits any parent scopes from parent components that are wrapped
@@ -55,6 +56,7 @@ export default function ui(key, opts = {}) {
        *
        * All state will be blown away on navigation by default.
        */
+      @React16UI()
       class UI extends Component {
 
         constructor(props, ctx, queue) {
@@ -125,7 +127,7 @@ export default function ui(key, opts = {}) {
           // set ensure we update our global store with the current state.
           if (this.props.ui.getIn(this.uiPath) === undefined && opts.state) {
             const state = this.getDefaultUIState(opts.state);
-            this.props.store.dispatch(mountUI(this.uiPath, state, opts.reducer));
+            this.context.store.dispatch(mountUI(this.uiPath, state, opts.reducer));
           }
         }
 
@@ -138,7 +140,7 @@ export default function ui(key, opts = {}) {
           // We can only see if this component's state is blown away by
           // accessing the current global UI state; the parent will not
           // necessarily always pass down child state.
-          const ui = getUIState(this.props.store.getState());
+          const ui = getUIState(this.context.store.getState());
           if (ui.getIn(this.uiPath) === undefined && opts.state) {
             const state = this.getDefaultUIState(opts.state, nextProps);
             this.props.setDefaultUI(this.uiPath, state);
@@ -150,7 +152,7 @@ export default function ui(key, opts = {}) {
         // This is also used within componentWilLReceiveProps and so props
         // also needs to be passed in
         getDefaultUIState(uiState, props = this.props) {
-          const globalState = this.props.store.getState();
+          const globalState = this.context.store.getState();
           let state = { ...uiState };
           Object.keys(state).forEach(k => {
             if (typeof(state[k]) === 'function') {
@@ -282,7 +284,7 @@ export default function ui(key, opts = {}) {
           //
           // We still use @connect() to connect to the store and listen for
           // changes in other cases.
-          const ui = getUIState(this.props.store.getState());
+          const ui = getUIState(this.context.store.getState());
 
           const result = Object.keys(this.uiVars).reduce((props, k) => {
             props[k] = ui.getIn(this.uiVars[k].concat(k));
@@ -310,6 +312,7 @@ export default function ui(key, opts = {}) {
           );
         }
       }
-    );
+
+      return connector(UI);
   }
 }
