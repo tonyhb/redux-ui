@@ -170,7 +170,7 @@ function ui(key) {
           // set ensure we update our global store with the current state.
           if (this.props.ui.getIn(this.uiPath) === undefined && opts.state) {
             var state = this.getDefaultUIState(opts.state);
-            this.props.store.dispatch((0, _actionReducer.mountUI)(this.uiPath, state, opts.reducer));
+            this.props.mountUI(this.uiPath, state, opts.reducer);
           }
         }
 
@@ -186,7 +186,8 @@ function ui(key) {
           // We can only see if this component's state is blown away by
           // accessing the current global UI state; the parent will not
           // necessarily always pass down child state.
-          var ui = (0, _utils.getUIState)(this.props.store.getState());
+          // const ui = getUIState(this.context.store.getState());
+          var ui = this.props.ui;
           if (ui.getIn(this.uiPath) === undefined && opts.state) {
             var state = this.getDefaultUIState(opts.state, nextProps);
             this.props.setDefaultUI(this.uiPath, state);
@@ -201,17 +202,15 @@ function ui(key) {
       }, {
         key: 'getDefaultUIState',
         value: function getDefaultUIState(uiState) {
-          var _this3 = this;
-
           var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.props;
 
-          var globalState = this.props.store.getState();
+          // const globalState = this.context.store.getState();
           var state = _extends({}, uiState);
-          Object.keys(state).forEach(function (k) {
-            if (typeof state[k] === 'function') {
-              state[k] = state[k](_this3.props, globalState);
-            }
-          });
+          // Object.keys(state).forEach(k => {
+          //   if (typeof(state[k]) === 'function') {
+          //     state[k] = state[k](this.props, globalState);
+          //   }
+          // });
           return state;
         }
 
@@ -229,12 +228,12 @@ function ui(key) {
       }, {
         key: 'componentWillUnmount',
         value: function componentWillUnmount() {
-          var _this4 = this;
+          var _this3 = this;
 
           if (opts.persist !== true) {
             if (window && window.requestAnimationFrame) {
               window.requestAnimationFrame(function () {
-                return _this4.props.unmountUI(_this4.uiPath);
+                return _this3.props.unmountUI(_this3.uiPath);
               });
             } else {
               this.props.unmountUI(this.uiPath);
@@ -250,7 +249,7 @@ function ui(key) {
       }, {
         key: 'getMergedContextVars',
         value: function getMergedContextVars() {
-          var _this5 = this;
+          var _this4 = this;
 
           var ctx = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.context;
 
@@ -262,7 +261,7 @@ function ui(key) {
             var state = opts.state || {};
             this.uiVars = _extends({}, ctx.uiVars) || {};
             Object.keys(state).forEach(function (k) {
-              return _this5.uiVars[k] = _this5.uiPath;
+              return _this4.uiVars[k] = _this4.uiPath;
             }, this);
           }
 
@@ -338,7 +337,7 @@ function ui(key) {
       }, {
         key: 'mergeUIProps',
         value: function mergeUIProps() {
-          var _this6 = this;
+          var _this5 = this;
 
           // WARNING: React has a subtle componentWillMount bug which we're
           // working around here!
@@ -364,10 +363,11 @@ function ui(key) {
           //
           // We still use @connect() to connect to the store and listen for
           // changes in other cases.
-          var ui = (0, _utils.getUIState)(this.props.store.getState());
+          // const ui = getUIState(this.context.store.getState());
+          var ui = this.props.ui;
 
           var result = Object.keys(this.uiVars).reduce(function (props, k) {
-            props[k] = ui.getIn(_this6.uiVars[k].concat(k));
+            props[k] = ui.getIn(_this5.uiVars[k].concat(k));
             return props;
           }, {}) || {};
 
@@ -423,6 +423,6 @@ function ui(key) {
     }, _temp);
 
 
-    return connector(React16UI()(UI));
+    return connector(UI);
   };
 }
