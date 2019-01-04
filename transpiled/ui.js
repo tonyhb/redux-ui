@@ -34,6 +34,8 @@ var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 
 var _actionReducer = require('./action-reducer');
 
+var _ReduxUIStoreContext = require('./ReduxUIStoreContext');
+
 var _utils = require('./utils');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -72,7 +74,7 @@ function ui(key) {
         var _class, _temp;
 
         // Return a parent UI class which scopes all UI state to the given key
-        return connector((
+
         /**
          * UI is a wrapper component which:
          *   1. Inherits any parent scopes from parent components that are wrapped
@@ -92,7 +94,7 @@ function ui(key) {
          *
          * All state will be blown away on navigation by default.
          */
-        _temp = _class = function (_Component) {
+        var UI = (_temp = _class = function (_Component) {
             _inherits(UI, _Component);
 
             function UI(props, ctx, queue) {
@@ -124,17 +126,30 @@ function ui(key) {
             // Pass these down in the new context created for this component
 
 
-            // Get the existing context from a UI parent, if possible
-
-
             _createClass(UI, [{
                 key: 'componentWillMount',
+
+
+                // Get the existing context from a UI parent, if possible
+                // static contextTypes = {
+                //     // This is used in mergeUIProps and construct() to immediately set
+                //     // props.
+                //     store: any,
+                //
+                //     uiKey: string,
+                //     uiPath: array,
+                //     uiVars: object,
+                //
+                //     updateUI: func,
+                //     resetUI: func
+                // }
+
                 value: function componentWillMount() {
                     // If the component's UI subtree doesn't exist and we have state to
                     // set ensure we update our global store with the current state.
                     if (this.props.ui.getIn(this.uiPath) === undefined && opts.state) {
                         var state = this.getDefaultUIState(opts.state);
-                        this.context.store.dispatch((0, _actionReducer.mountUI)(this.uiPath, state, opts.reducer));
+                        // this.context.store.dispatch(mountUI(this.uiPath, state, opts.reducer));
                     }
                 }
 
@@ -150,7 +165,7 @@ function ui(key) {
                     // We can only see if this component's state is blown away by
                     // accessing the current global UI state; the parent will not
                     // necessarily always pass down child state.
-                    var ui = (0, _utils.getUIState)(this.context.store.getState());
+                    // const ui = getUIState(this.context.store.getState());
                     if (ui.getIn(this.uiPath) === undefined && opts.state) {
                         var state = this.getDefaultUIState(opts.state, nextProps);
                         this.props.setDefaultUI(this.uiPath, state);
@@ -169,7 +184,7 @@ function ui(key) {
 
                     var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.props;
 
-                    var globalState = this.context.store.getState();
+                    var globalState = {};
                     var state = _extends({}, uiState);
                     Object.keys(state).forEach(function (k) {
                         if (typeof state[k] === 'function') {
@@ -328,7 +343,7 @@ function ui(key) {
                     //
                     // We still use @connect() to connect to the store and listen for
                     // changes in other cases.
-                    var ui = (0, _utils.getUIState)(this.context.store.getState());
+                    var ui = (0, _utils.getUIState)({});
 
                     var result = Object.keys(this.uiVars).reduce(function (props, k) {
                         props[k] = ui.getIn(_this5.uiVars[k].concat(k));
@@ -346,6 +361,7 @@ function ui(key) {
             }, {
                 key: 'render',
                 value: function render() {
+                    console.log("context", this.context);
                     return _react2.default.createElement(WrappedComponent, _extends({}, this.props, {
                         uiKey: this.key,
                         uiPath: this.uiPath,
@@ -373,17 +389,11 @@ function ui(key) {
 
             // Actions to pass to children
             updateUI: _propTypes.func,
-            resetUI: _propTypes.func }, _class.contextTypes = {
-            // This is used in mergeUIProps and construct() to immediately set
-            // props.
-            store: _propTypes.any,
-
-            uiKey: _propTypes.string,
-            uiPath: _propTypes.array,
-            uiVars: _propTypes.object,
-
-            updateUI: _propTypes.func,
             resetUI: _propTypes.func
-        }, _temp));
+        }, _class.contextType = _ReduxUIStoreContext.ReduxUIStoreContext, _temp);
+
+        UI.contextType = _ReduxUIStoreContext.ReduxUIStoreContext;
+
+        return connector(UI);
     };
 }

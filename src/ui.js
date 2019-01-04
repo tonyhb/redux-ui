@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import invariant from 'invariant';
 import shallowCompare from 'react-pure-render/shallowEqual';
 import { updateUI, massUpdateUI, setDefaultUI, mountUI, unmountUI } from './action-reducer';
+import { ReduxUIStoreContext } from "./ReduxUIStoreContext"
 
 import { getUIState } from './utils';
 
@@ -35,7 +36,7 @@ export default function ui(key, opts = {}) {
     return (WrappedComponent) => {
 
         // Return a parent UI class which scopes all UI state to the given key
-        return connector(
+
             /**
              * UI is a wrapper component which:
              *   1. Inherits any parent scopes from parent components that are wrapped
@@ -106,26 +107,28 @@ export default function ui(key, opts = {}) {
                     resetUI: func
                 }
 
+                static contextType = ReduxUIStoreContext;
+
                 // Get the existing context from a UI parent, if possible
-                static contextTypes = {
-                    // This is used in mergeUIProps and construct() to immediately set
-                    // props.
-                    store: any,
-
-                    uiKey: string,
-                    uiPath: array,
-                    uiVars: object,
-
-                    updateUI: func,
-                    resetUI: func
-                }
+                // static contextTypes = {
+                //     // This is used in mergeUIProps and construct() to immediately set
+                //     // props.
+                //     store: any,
+                //
+                //     uiKey: string,
+                //     uiPath: array,
+                //     uiVars: object,
+                //
+                //     updateUI: func,
+                //     resetUI: func
+                // }
 
                 componentWillMount() {
                     // If the component's UI subtree doesn't exist and we have state to
                     // set ensure we update our global store with the current state.
                     if (this.props.ui.getIn(this.uiPath) === undefined && opts.state) {
                         const state = this.getDefaultUIState(opts.state);
-                        this.context.store.dispatch(mountUI(this.uiPath, state, opts.reducer));
+                        // this.context.store.dispatch(mountUI(this.uiPath, state, opts.reducer));
                     }
                 }
 
@@ -138,7 +141,7 @@ export default function ui(key, opts = {}) {
                     // We can only see if this component's state is blown away by
                     // accessing the current global UI state; the parent will not
                     // necessarily always pass down child state.
-                    const ui = getUIState(this.context.store.getState());
+                    // const ui = getUIState(this.context.store.getState());
                     if (ui.getIn(this.uiPath) === undefined && opts.state) {
                         const state = this.getDefaultUIState(opts.state, nextProps);
                         this.props.setDefaultUI(this.uiPath, state);
@@ -150,7 +153,7 @@ export default function ui(key, opts = {}) {
                 // This is also used within componentWilLReceiveProps and so props
                 // also needs to be passed in
                 getDefaultUIState(uiState, props = this.props) {
-                    const globalState = this.context.store.getState();
+                    const globalState = {}
                     let state = { ...uiState };
                     Object.keys(state).forEach(k => {
                         if (typeof(state[k]) === 'function') {
@@ -282,7 +285,7 @@ export default function ui(key, opts = {}) {
                     //
                     // We still use @connect() to connect to the store and listen for
                     // changes in other cases.
-                    const ui = getUIState(this.context.store.getState());
+                    const ui = getUIState({});
 
                     const result = Object.keys(this.uiVars).reduce((props, k) => {
                         props[k] = ui.getIn(this.uiVars[k].concat(k));
@@ -299,6 +302,7 @@ export default function ui(key, opts = {}) {
                 }
 
                 render() {
+                    console.log("context", this.context)
                     return (
                         <WrappedComponent
                             { ...this.props }
@@ -310,6 +314,8 @@ export default function ui(key, opts = {}) {
                     );
                 }
             }
-        );
+            UI.contextType = ReduxUIStoreContext;
+
+        return connector(UI);
     }
 }
