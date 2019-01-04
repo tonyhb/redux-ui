@@ -125,24 +125,11 @@ function ui(key) {
             // Pass these down in the new context created for this component
 
 
+            // Get the existing context from a UI parent, if possible
+
+
             _createClass(UI, [{
                 key: 'componentWillMount',
-
-
-                // // Get the existing context from a UI parent, if possible
-                // static contextTypes = {
-                //     // This is used in mergeUIProps and construct() to immediately set
-                //     // props.
-                //     store: any,
-                //
-                //     uiKey: string,
-                //     uiPath: array,
-                //     uiVars: object,
-                //
-                //     updateUI: func,
-                //     resetUI: func
-                // }
-
                 value: function componentWillMount() {
                     // If the component's UI subtree doesn't exist and we have state to
                     // set ensure we update our global store with the current state.
@@ -387,7 +374,17 @@ function ui(key) {
 
             // Actions to pass to children
             updateUI: _propTypes.func,
-            resetUI: _propTypes.func }, _temp);
+            resetUI: _propTypes.func }, _class.contextTypes = {
+            // This is used in mergeUIProps and construct() to immediately set
+            // props.
+
+            uiKey: _propTypes.string,
+            uiPath: _propTypes.array,
+            uiVars: _propTypes.object,
+
+            updateUI: _propTypes.func,
+            resetUI: _propTypes.func
+        }, _temp);
 
 
         UI.contextType = _ReduxUIStoreContext.ReduxUIStoreContext;

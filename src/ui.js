@@ -108,19 +108,18 @@ export default function ui(key, opts = {}) {
                 resetUI: func
             }
 
-            // // Get the existing context from a UI parent, if possible
-            // static contextTypes = {
-            //     // This is used in mergeUIProps and construct() to immediately set
-            //     // props.
-            //     store: any,
-            //
-            //     uiKey: string,
-            //     uiPath: array,
-            //     uiVars: object,
-            //
-            //     updateUI: func,
-            //     resetUI: func
-            // }
+            // Get the existing context from a UI parent, if possible
+            static contextTypes = {
+                // This is used in mergeUIProps and construct() to immediately set
+                // props.
+
+                uiKey: string,
+                uiPath: array,
+                uiVars: object,
+
+                updateUI: func,
+                resetUI: func
+            }
 
             componentWillMount() {
                 // If the component's UI subtree doesn't exist and we have state to
