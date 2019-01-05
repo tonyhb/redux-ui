@@ -81,7 +81,7 @@ export default function ui(key, opts = {}) {
 
                 // Immediately set this.uiPath and this.uiVars based on the incoming
                 // context in class instantiation
-                this.getMergedContextVars(ctx)
+                this.getMergedContextVars(this.context)
             }
 
             static propTypes = {
@@ -94,32 +94,32 @@ export default function ui(key, opts = {}) {
             }
 
             // Pass these down in the new context created for this component
-            static childContextTypes = {
-                // uiKey is the name of the parent context's key
-                uiKey: string,
-                // uiPath is the current path of the UI context
-                uiPath: array,
-                // uiVars is a map of UI variable names stored in state to the parent
-                // context which controls them.
-                uiVars: object,
-
-                // Actions to pass to children
-                updateUI: func,
-                resetUI: func
-            }
-
-            // Get the existing context from a UI parent, if possible
-            static contextTypes = {
-                // This is used in mergeUIProps and construct() to immediately set
-                // props.
-
-                uiKey: string,
-                uiPath: array,
-                uiVars: object,
-
-                updateUI: func,
-                resetUI: func
-            }
+            // static childContextTypes = {
+            //     // uiKey is the name of the parent context's key
+            //     uiKey: string,
+            //     // uiPath is the current path of the UI context
+            //     uiPath: array,
+            //     // uiVars is a map of UI variable names stored in state to the parent
+            //     // context which controls them.
+            //     uiVars: object,
+            //
+            //     // Actions to pass to children
+            //     updateUI: func,
+            //     resetUI: func
+            // }
+            //
+            // // Get the existing context from a UI parent, if possible
+            // static contextTypes = {
+            //     // This is used in mergeUIProps and construct() to immediately set
+            //     // props.
+            //
+            //     uiKey: string,
+            //     uiPath: array,
+            //     uiVars: object,
+            //
+            //     updateUI: func,
+            //     resetUI: func
+            // }
 
             componentWillMount() {
                 // If the component's UI subtree doesn't exist and we have state to
@@ -301,7 +301,7 @@ export default function ui(key, opts = {}) {
 
             render() {
                 return (
-                    <ReduxUIStoreContext.Provider value={this.getMergedContextVars()}>
+                    <ReduxUIStoreContext.Provider value={this.getMergedContextVars(this.context)}>
                         <WrappedComponent
                             {...this.props}
                             uiKey={this.key}

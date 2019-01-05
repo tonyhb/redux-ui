@@ -118,18 +118,42 @@ function ui(key) {
 
                 // Immediately set this.uiPath and this.uiVars based on the incoming
                 // context in class instantiation
-                _this.getMergedContextVars(ctx);
+                _this.getMergedContextVars(_this.context);
                 return _this;
             }
 
-            // Pass these down in the new context created for this component
-
-
-            // Get the existing context from a UI parent, if possible
-
-
             _createClass(UI, [{
                 key: 'componentWillMount',
+
+
+                // Pass these down in the new context created for this component
+                // static childContextTypes = {
+                //     // uiKey is the name of the parent context's key
+                //     uiKey: string,
+                //     // uiPath is the current path of the UI context
+                //     uiPath: array,
+                //     // uiVars is a map of UI variable names stored in state to the parent
+                //     // context which controls them.
+                //     uiVars: object,
+                //
+                //     // Actions to pass to children
+                //     updateUI: func,
+                //     resetUI: func
+                // }
+                //
+                // // Get the existing context from a UI parent, if possible
+                // static contextTypes = {
+                //     // This is used in mergeUIProps and construct() to immediately set
+                //     // props.
+                //
+                //     uiKey: string,
+                //     uiPath: array,
+                //     uiVars: object,
+                //
+                //     updateUI: func,
+                //     resetUI: func
+                // }
+
                 value: function componentWillMount() {
                     // If the component's UI subtree doesn't exist and we have state to
                     // set ensure we update our global store with the current state.
@@ -343,7 +367,7 @@ function ui(key) {
                 value: function render() {
                     return _react2.default.createElement(
                         _ReduxUIStoreContext.ReduxUIStoreContext.Provider,
-                        { value: this.getMergedContextVars() },
+                        { value: this.getMergedContextVars(this.context) },
                         _react2.default.createElement(WrappedComponent, _extends({}, this.props, {
                             uiKey: this.key,
                             uiPath: this.uiPath,
@@ -361,28 +385,7 @@ function ui(key) {
             // These actions are passed via react-redux connector
             setDefaultUI: _propTypes.func.isRequired,
             updateUI: _propTypes.func.isRequired,
-            massUpdateUI: _propTypes.func.isRequired }, _class.childContextTypes = {
-            // uiKey is the name of the parent context's key
-            uiKey: _propTypes.string,
-            // uiPath is the current path of the UI context
-            uiPath: _propTypes.array,
-            // uiVars is a map of UI variable names stored in state to the parent
-            // context which controls them.
-            uiVars: _propTypes.object,
-
-            // Actions to pass to children
-            updateUI: _propTypes.func,
-            resetUI: _propTypes.func }, _class.contextTypes = {
-            // This is used in mergeUIProps and construct() to immediately set
-            // props.
-
-            uiKey: _propTypes.string,
-            uiPath: _propTypes.array,
-            uiVars: _propTypes.object,
-
-            updateUI: _propTypes.func,
-            resetUI: _propTypes.func
-        }, _temp);
+            massUpdateUI: _propTypes.func.isRequired }, _temp);
 
 
         UI.contextType = _ReduxUIStoreContext.ReduxUIStoreContext;
