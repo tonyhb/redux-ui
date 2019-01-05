@@ -135,7 +135,7 @@ function ui(key) {
                     // set ensure we update our global store with the current state.
                     if (this.props.ui.getIn(this.uiPath) === undefined && opts.state) {
                         var state = this.getDefaultUIState(opts.state);
-                        this.context.dispatch((0, _actionReducer.mountUI)(this.uiPath, state, opts.reducer));
+                        this.context.store.dispatch((0, _actionReducer.mountUI)(this.uiPath, state, opts.reducer));
                     }
                 }
 
@@ -151,7 +151,7 @@ function ui(key) {
                     // We can only see if this component's state is blown away by
                     // accessing the current global UI state; the parent will not
                     // necessarily always pass down child state.
-                    var ui = (0, _utils.getUIState)(this.context.getState());
+                    var ui = (0, _utils.getUIState)(this.context.store.getState());
                     if (ui.getIn(this.uiPath) === undefined && opts.state) {
                         var state = this.getDefaultUIState(opts.state, nextProps);
                         this.props.setDefaultUI(this.uiPath, state);
@@ -170,7 +170,7 @@ function ui(key) {
 
                     var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.props;
 
-                    var globalState = this.context.getState();
+                    var globalState = this.context.store.getState();
                     var state = _extends({}, uiState);
                     Object.keys(state).forEach(function (k) {
                         if (typeof state[k] === 'function') {
@@ -240,24 +240,18 @@ function ui(key) {
                 //
                 // Pass the uiKey and partially applied updateUI function to all
                 // child components that are wrapped in a plain `@ui()` decorator
-
-            }, {
-                key: 'getChildContext',
-                value: function getChildContext() {
-                    var _getMergedContextVars = this.getMergedContextVars(),
-                        _getMergedContextVars2 = _slicedToArray(_getMergedContextVars, 2),
-                        uiVars = _getMergedContextVars2[0],
-                        uiPath = _getMergedContextVars2[1];
-
-                    return {
-                        uiKey: this.key,
-                        uiVars: uiVars,
-                        uiPath: uiPath,
-
-                        updateUI: this.updateUI,
-                        resetUI: this.resetUI
-                    };
-                }
+                // getChildContext() {
+                //     let [uiVars, uiPath] = this.getMergedContextVars()
+                //
+                //     return {
+                //         uiKey: this.key,
+                //         uiVars,
+                //         uiPath,
+                //
+                //         updateUI: this.updateUI,
+                //         resetUI: this.resetUI
+                //     }
+                // }
 
                 // Helper function to reset UI for the current context **and all child
                 // scopes**.
@@ -275,9 +269,9 @@ function ui(key) {
                 key: 'updateUI',
                 value: function updateUI(name, value) {
                     // Get a list of all UI variables available to this context (which
-                    var _getMergedContextVars3 = this.getMergedContextVars(),
-                        _getMergedContextVars4 = _slicedToArray(_getMergedContextVars3, 1),
-                        uiVars = _getMergedContextVars4[0];
+                    var _getMergedContextVars = this.getMergedContextVars(),
+                        _getMergedContextVars2 = _slicedToArray(_getMergedContextVars, 1),
+                        uiVars = _getMergedContextVars2[0];
 
                     var uiVarPath = uiVars[name];
 
@@ -329,7 +323,7 @@ function ui(key) {
                     //
                     // We still use @connect() to connect to the store and listen for
                     // changes in other cases.
-                    var ui = (0, _utils.getUIState)(this.context.getState());
+                    var ui = (0, _utils.getUIState)(this.context.store.getState());
 
                     var result = Object.keys(this.uiVars).reduce(function (props, k) {
                         props[k] = ui.getIn(_this5.uiVars[k].concat(k));
@@ -347,12 +341,16 @@ function ui(key) {
             }, {
                 key: 'render',
                 value: function render() {
-                    return _react2.default.createElement(WrappedComponent, _extends({}, this.props, {
-                        uiKey: this.key,
-                        uiPath: this.uiPath,
-                        ui: this.mergeUIProps(),
-                        resetUI: this.resetUI,
-                        updateUI: this.updateUI }));
+                    return _react2.default.createElement(
+                        _ReduxUIStoreContext.ReduxUIStoreContext.Provider,
+                        { value: this.getMergedContextVars() },
+                        _react2.default.createElement(WrappedComponent, _extends({}, this.props, {
+                            uiKey: this.key,
+                            uiPath: this.uiPath,
+                            ui: this.mergeUIProps(),
+                            resetUI: this.resetUI,
+                            updateUI: this.updateUI }))
+                    );
                 }
             }]);
 

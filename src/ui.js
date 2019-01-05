@@ -126,7 +126,7 @@ export default function ui(key, opts = {}) {
                 // set ensure we update our global store with the current state.
                 if (this.props.ui.getIn(this.uiPath) === undefined && opts.state) {
                     const state = this.getDefaultUIState(opts.state)
-                    this.context.dispatch(mountUI(this.uiPath, state, opts.reducer))
+                    this.context.store.dispatch(mountUI(this.uiPath, state, opts.reducer))
                 }
             }
 
@@ -139,7 +139,7 @@ export default function ui(key, opts = {}) {
                 // We can only see if this component's state is blown away by
                 // accessing the current global UI state; the parent will not
                 // necessarily always pass down child state.
-                const ui = getUIState(this.context.getState())
+                const ui = getUIState(this.context.store.getState())
                 if (ui.getIn(this.uiPath) === undefined && opts.state) {
                     const state = this.getDefaultUIState(opts.state, nextProps)
                     this.props.setDefaultUI(this.uiPath, state)
@@ -151,7 +151,7 @@ export default function ui(key, opts = {}) {
             // This is also used within componentWilLReceiveProps and so props
             // also needs to be passed in
             getDefaultUIState(uiState, props = this.props) {
-                const globalState = this.context.getState()
+                const globalState = this.context.store.getState()
                 let state = { ...uiState }
                 Object.keys(state).forEach(k => {
                     if (typeof(state[k]) === 'function') {
@@ -205,18 +205,18 @@ export default function ui(key, opts = {}) {
             //
             // Pass the uiKey and partially applied updateUI function to all
             // child components that are wrapped in a plain `@ui()` decorator
-            getChildContext() {
-                let [uiVars, uiPath] = this.getMergedContextVars()
-
-                return {
-                    uiKey: this.key,
-                    uiVars,
-                    uiPath,
-
-                    updateUI: this.updateUI,
-                    resetUI: this.resetUI
-                }
-            }
+            // getChildContext() {
+            //     let [uiVars, uiPath] = this.getMergedContextVars()
+            //
+            //     return {
+            //         uiKey: this.key,
+            //         uiVars,
+            //         uiPath,
+            //
+            //         updateUI: this.updateUI,
+            //         resetUI: this.resetUI
+            //     }
+            // }
 
             // Helper function to reset UI for the current context **and all child
             // scopes**.
@@ -283,7 +283,7 @@ export default function ui(key, opts = {}) {
                 //
                 // We still use @connect() to connect to the store and listen for
                 // changes in other cases.
-                const ui = getUIState(this.context.getState())
+                const ui = getUIState(this.context.store.getState())
 
                 const result = Object.keys(this.uiVars).reduce((props, k) => {
                     props[k] = ui.getIn(this.uiVars[k].concat(k))
@@ -301,13 +301,15 @@ export default function ui(key, opts = {}) {
 
             render() {
                 return (
-                    <WrappedComponent
-                        {...this.props}
-                        uiKey={this.key}
-                        uiPath={this.uiPath}
-                        ui={this.mergeUIProps()}
-                        resetUI={this.resetUI}
-                        updateUI={this.updateUI}/>
+                    <ReduxUIStoreContext.Provider value={this.getMergedContextVars()}>
+                        <WrappedComponent
+                            {...this.props}
+                            uiKey={this.key}
+                            uiPath={this.uiPath}
+                            ui={this.mergeUIProps()}
+                            resetUI={this.resetUI}
+                            updateUI={this.updateUI}/>
+                    </ReduxUIStoreContext.Provider>
                 )
             }
         }
