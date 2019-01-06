@@ -205,18 +205,19 @@ export default function ui(key, opts = {}) {
             //
             // Pass the uiKey and partially applied updateUI function to all
             // child components that are wrapped in a plain `@ui()` decorator
-            // getChildContext() {
-            //     let [uiVars, uiPath] = this.getMergedContextVars()
-            //
-            //     return {
-            //         uiKey: this.key,
-            //         uiVars,
-            //         uiPath,
-            //
-            //         updateUI: this.updateUI,
-            //         resetUI: this.resetUI
-            //     }
-            // }
+            getContextForChild() {
+                let [uiVars, uiPath] = this.getMergedContextVars()
+
+                return {
+                    store: this.context.store,
+                    uiKey: this.key,
+                    uiVars,
+                    uiPath,
+
+                    updateUI: this.updateUI,
+                    resetUI: this.resetUI
+                }
+            }
 
             // Helper function to reset UI for the current context **and all child
             // scopes**.
@@ -301,7 +302,7 @@ export default function ui(key, opts = {}) {
 
             render() {
                 return (
-                    <ReduxUIStoreContext.Provider value={this.getMergedContextVars(this.context)}>
+                    <ReduxUIStoreContext.Provider value={this.getContextForChild()}>
                         <WrappedComponent
                             {...this.props}
                             uiKey={this.key}

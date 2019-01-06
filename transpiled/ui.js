@@ -264,18 +264,25 @@ function ui(key) {
                 //
                 // Pass the uiKey and partially applied updateUI function to all
                 // child components that are wrapped in a plain `@ui()` decorator
-                // getChildContext() {
-                //     let [uiVars, uiPath] = this.getMergedContextVars()
-                //
-                //     return {
-                //         uiKey: this.key,
-                //         uiVars,
-                //         uiPath,
-                //
-                //         updateUI: this.updateUI,
-                //         resetUI: this.resetUI
-                //     }
-                // }
+
+            }, {
+                key: 'getContextForChild',
+                value: function getContextForChild() {
+                    var _getMergedContextVars = this.getMergedContextVars(),
+                        _getMergedContextVars2 = _slicedToArray(_getMergedContextVars, 2),
+                        uiVars = _getMergedContextVars2[0],
+                        uiPath = _getMergedContextVars2[1];
+
+                    return {
+                        store: this.context.store,
+                        uiKey: this.key,
+                        uiVars: uiVars,
+                        uiPath: uiPath,
+
+                        updateUI: this.updateUI,
+                        resetUI: this.resetUI
+                    };
+                }
 
                 // Helper function to reset UI for the current context **and all child
                 // scopes**.
@@ -293,9 +300,9 @@ function ui(key) {
                 key: 'updateUI',
                 value: function updateUI(name, value) {
                     // Get a list of all UI variables available to this context (which
-                    var _getMergedContextVars = this.getMergedContextVars(),
-                        _getMergedContextVars2 = _slicedToArray(_getMergedContextVars, 1),
-                        uiVars = _getMergedContextVars2[0];
+                    var _getMergedContextVars3 = this.getMergedContextVars(),
+                        _getMergedContextVars4 = _slicedToArray(_getMergedContextVars3, 1),
+                        uiVars = _getMergedContextVars4[0];
 
                     var uiVarPath = uiVars[name];
 
@@ -367,7 +374,7 @@ function ui(key) {
                 value: function render() {
                     return _react2.default.createElement(
                         _ReduxUIStoreContext.ReduxUIStoreContext.Provider,
-                        { value: this.getMergedContextVars(this.context) },
+                        { value: this.getContextForChild() },
                         _react2.default.createElement(WrappedComponent, _extends({}, this.props, {
                             uiKey: this.key,
                             uiPath: this.uiPath,
